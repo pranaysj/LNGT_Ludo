@@ -111,7 +111,7 @@ namespace BEKStudio {
         {
             splashScreen.SetActive(true);
             homePageScreen.SetActive(false);
-            float splashTime = 4.0f;
+            float splashTime = 4.3f;
 
             yield return new WaitForSeconds(splashTime);
 

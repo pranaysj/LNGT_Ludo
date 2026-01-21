@@ -3446,7 +3446,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 233024365}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 790007969}
+        m_TargetAssemblyTypeName: BEKStudio.MenuController, Assembly-CSharp
+        m_MethodName: MiddleOfflineMultiplayerButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &248316746
 GameObject:
   m_ObjectHideFlags: 0
@@ -4060,7 +4072,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 271685934}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 790007969}
+        m_TargetAssemblyTypeName: BEKStudio.MenuController, Assembly-CSharp
+        m_MethodName: MiddlePlayButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &272683321
 GameObject:
   m_ObjectHideFlags: 0
@@ -8907,7 +8931,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 681179950}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 790007969}
+        m_TargetAssemblyTypeName: BEKStudio.MenuController, Assembly-CSharp
+        m_MethodName: MiddleMultiplayerButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &681612309
 GameObject:
   m_ObjectHideFlags: 0
@@ -10319,6 +10355,13 @@ MonoBehaviour:
   topAvatarImg: {fileID: 856310012}
   topUsernameText: {fileID: 1797058203}
   topCoinText: {fileID: 628253528}
+  homeButton: {fileID: 2111044167}
+  ProfileButton: {fileID: 2111044167}
+  LockButton: {fileID: 2111044167}
+  StoreButton: {fileID: 2111044167}
+  selectModeScreen: {fileID: 840495126}
+  multiplayerScreen: {fileID: 1355007380}
+  offlineMultiplayerScreen: {fileID: 358799828}
   mainBottom: {fileID: 594349977}
   mainBottomHomeActive: {fileID: 0}
   mainBottomStoreActive: {fileID: 0}
@@ -13649,7 +13692,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1063083299}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 790007969}
+        m_TargetAssemblyTypeName: BEKStudio.MenuController, Assembly-CSharp
+        m_MethodName: BottomButtons
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1063083299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16029,8 +16084,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 790007969}
         m_TargetAssemblyTypeName: BEKStudio.MenuController, Assembly-CSharp
-        m_MethodName: MainStoreBtn
-        m_Mode: 1
+        m_MethodName: BottomButtons
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -21158,7 +21213,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1703946116}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 790007969}
+        m_TargetAssemblyTypeName: BEKStudio.MenuController, Assembly-CSharp
+        m_MethodName: BottomButtons
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1703946116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22003,8 +22070,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 790007969}
         m_TargetAssemblyTypeName: BEKStudio.MenuController, Assembly-CSharp
-        m_MethodName: MainHomeBtn
-        m_Mode: 1
+        m_MethodName: BottomButtons
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

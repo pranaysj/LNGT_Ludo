@@ -19,6 +19,15 @@ namespace BEKStudio {
         public Image topAvatarImg;
         public TextMeshProUGUI topUsernameText;
         public TextMeshProUGUI topCoinText;
+        [Header("Bottom")]
+        public GameObject homeButton;
+        public GameObject ProfileButton;
+        public GameObject LockButton;
+        public GameObject StoreButton;
+        [Header("Middle")]
+        public GameObject selectModeScreen;
+        public GameObject multiplayerScreen;
+        public GameObject offlineMultiplayerScreen;
         [Header("Main")]
         public GameObject mainBottom;
         public GameObject mainBottomHomeActive;
@@ -183,48 +192,124 @@ namespace BEKStudio {
             PawnSelectShow();
         }
 
-        public void MainHomeBtn() {
+        //Middle Panel Start
+        public void MiddlePlayButton()
+        {
+            DeactivatePages();
+
+            selectModeScreen.SetActive(true);
+        }
+
+        public void MiddleMultiplayerButton()
+        {
+            DeactivatePages();
+
+            multiplayerScreen.SetActive(true);
+        }
+
+        public void MiddleOfflineMultiplayerButton()
+        {
+            DeactivatePages();
+
+            offlineMultiplayerScreen.SetActive(true);
+        }
+        //Middle Panel End
+
+
+        //Bottom Panel Start
+        public void BottomButtons(int index)
+        {
+            AudioController.Instance.PlayButtonSound();
+
+            DeactivatePages();
+
+            switch (index)
+            {
+                case 0:
+                    homeButton.SetActive(true);
+                    break;
+                case 1:
+                    ProfileButton.SetActive(true);
+                    break;
+                case 2:
+                    LockButton.SetActive(true);
+                    break;
+                case 3:
+                    StoreButton.SetActive(true);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+        //No used
+        public void MainHomeBtn()
+        {
             AudioController.Instance.PlayButtonSound();
             if (homeScreen.activeInHierarchy) return;
 
-            if (storeScreen.activeInHierarchy && !LeanTween.isTweening(storePanel)) {
+            if (storeScreen.activeInHierarchy && !LeanTween.isTweening(storePanel))
+            {
                 StoreClose();
             }
         }
 
-        public void MainWatchVideoBtn() {
+        public void MainWatchVideoBtn()
+        {
             AdsManager.Instance.ShowRewardedAd();
         }
 
-        public void MainStoreBtn() {
+        public void MainStoreBtn()
+        {
             AudioController.Instance.PlayButtonSound();
             if (storeScreen.activeInHierarchy) return;
 
             StoreShow();
         }
 
-        void StoreShow() {
+        void StoreShow()
+        {
             storePanel.transform.localScale = Vector2.zero;
             storeScreen.SetActive(true);
 
-            if (homeScreen.activeInHierarchy) {
+            if (homeScreen.activeInHierarchy)
+            {
                 HomeClose();
             }
 
-            LeanTween.scale(storePanel, Vector2.one, 0.2f).setDelay(0.41f).setEaseOutBack().setOnStart(() => {
+            LeanTween.scale(storePanel, Vector2.one, 0.2f).setDelay(0.41f).setEaseOutBack().setOnStart(() =>
+            {
                 MainBottomCheckTabs();
             });
         }
 
-        void StoreClose(bool showHome = true) {
-            LeanTween.scale(storePanel, Vector2.zero, 0.2f).setEaseInBack().setOnComplete(() => {
+        void StoreClose(bool showHome = true)
+        {
+            LeanTween.scale(storePanel, Vector2.zero, 0.2f).setEaseInBack().setOnComplete(() =>
+            {
                 storeScreen.SetActive(false);
 
-                if (showHome) {
+                if (showHome)
+                {
                     HomeShow();
                     MainBottomCheckTabs();
                 }
             });
+        }
+        //Bottom Panel Stop
+
+        private void DeactivatePages()
+        {
+            AudioController.Instance.PlayButtonSound();
+
+            homeButton.SetActive(false);
+            ProfileButton.SetActive(false);
+            LockButton.SetActive(false);
+            StoreButton.SetActive(false);
+            selectModeScreen.SetActive(false);
+            multiplayerScreen.SetActive(false);
+            offlineMultiplayerScreen.SetActive(false);
         }
 
         public void StoreItemBtn(int id) {

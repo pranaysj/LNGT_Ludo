@@ -11,6 +11,9 @@ namespace BEKStudio {
     public class MenuController : MonoBehaviour {
         public static MenuController Instance;
         public GameObject dontDestroyPrefab;
+        [Header("Splash Screen")]
+        public GameObject splashScreen;
+        public GameObject homePageScreen;
         public Sprite[] avatars;
         [Header("Top")]
         public Image topAvatarImg;
@@ -54,6 +57,10 @@ namespace BEKStudio {
         }
 
         void Start() {
+
+            //Strat Splash Screen
+            StartCoroutine(StartSplashScreen());
+
             if (PlayerPrefs.HasKey("pawnColor")) {
                 PlayerPrefs.DeleteKey("pawnColor");
             }
@@ -98,6 +105,19 @@ namespace BEKStudio {
 
             
             AdsManager.Instance.DestoryBannerAd();
+        }
+
+        private IEnumerator StartSplashScreen()
+        {
+            splashScreen.SetActive(true);
+            homePageScreen.SetActive(false);
+            float splashTime = 4.0f;
+
+            yield return new WaitForSeconds(splashTime);
+
+            splashScreen.SetActive(false);
+            homePageScreen.SetActive(true);
+
         }
 
         public void UpdateCoinText() {

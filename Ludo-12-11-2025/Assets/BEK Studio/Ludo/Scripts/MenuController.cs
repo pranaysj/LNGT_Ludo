@@ -114,6 +114,9 @@ namespace BEKStudio {
 
             
             AdsManager.Instance.DestoryBannerAd();
+
+            Debug.Log("Persistent Data Path: " + Application.persistentDataPath);
+
         }
 
         private IEnumerator StartSplashScreen()
@@ -162,6 +165,35 @@ namespace BEKStudio {
             mainBottomStoreActive.SetActive(storeScreen.activeInHierarchy);
         }
 
+        //++++Middle Panel Start
+        public void MiddlePlayButton()
+        {
+            if (selectModeScreen.activeInHierarchy) return;
+
+            DeactivatePages();
+
+            selectModeScreen.SetActive(true);
+        }
+
+        public void MiddleMultiplayerButton()
+        {
+            if (selectModeScreen.activeInHierarchy) return;
+
+            DeactivatePages();
+
+            multiplayerScreen.SetActive(true);
+        }
+
+        public void MiddleOfflineMultiplayerButton()
+        {
+            if (offlineMultiplayerScreen.activeInHierarchy) return;
+
+            DeactivatePages();
+
+            offlineMultiplayerScreen.SetActive(true);
+        }
+
+        //OLD FUNCTIONS
         public void MainOnlineBtn() {
             AudioController.Instance.PlayButtonSound();
             if (onlineScreen.activeInHierarchy) return;
@@ -192,31 +224,10 @@ namespace BEKStudio {
             PawnSelectShow();
         }
 
-        //Middle Panel Start
-        public void MiddlePlayButton()
-        {
-            DeactivatePages();
-
-            selectModeScreen.SetActive(true);
-        }
-
-        public void MiddleMultiplayerButton()
-        {
-            DeactivatePages();
-
-            multiplayerScreen.SetActive(true);
-        }
-
-        public void MiddleOfflineMultiplayerButton()
-        {
-            DeactivatePages();
-
-            offlineMultiplayerScreen.SetActive(true);
-        }
-        //Middle Panel End
+        //----Middle Panel End
 
 
-        //Bottom Panel Start
+        //++++Bottom Panel Start
         public void BottomButtons(int index)
         {
             AudioController.Instance.PlayButtonSound();
@@ -243,7 +254,7 @@ namespace BEKStudio {
         }
 
 
-        //No used
+        //OLD FUNCTIONS
         public void MainHomeBtn()
         {
             AudioController.Instance.PlayButtonSound();
@@ -297,7 +308,7 @@ namespace BEKStudio {
                 }
             });
         }
-        //Bottom Panel Stop
+        //----Bottom Panel Stop
 
         private void DeactivatePages()
         {

@@ -26,8 +26,11 @@ namespace BEKStudio {
         public GameObject StoreButton;
         [Header("Middle")]
         public GameObject selectModeScreen;
+        public GameObject offlineModeButton;
         public GameObject multiplayerScreen;
+        public GameObject quickMatchScreen;
         public GameObject offlineMultiplayerScreen;
+        public GameObject practiceMatchScreen;
         [Header("Main")]
         public GameObject mainBottom;
         public GameObject mainBottomHomeActive;
@@ -68,7 +71,7 @@ namespace BEKStudio {
         void Start() {
 
             //Strat Splash Screen
-            StartCoroutine(StartSplashScreen());
+            //StartCoroutine(StartSplashScreen());
 
             if (PlayerPrefs.HasKey("pawnColor")) {
                 PlayerPrefs.DeleteKey("pawnColor");
@@ -172,14 +175,34 @@ namespace BEKStudio {
 
             DeactivatePages();
 
+            ButtonAlphaState(offlineModeButton, 0.3f, false);
+
+            PlayerPrefs.SetString("mode", "online");
+            PlayerPrefs.Save();
+
             selectModeScreen.SetActive(true);
+        }
+        
+        private void ButtonAlphaState(GameObject gameObject, float alpha, bool enable)
+        {
+
+            Color color = gameObject.GetComponent<Image>().color;
+            Button button = gameObject.GetComponent<Button>();
+            button.interactable = enable;
+            color.a = alpha;
         }
 
         public void MiddleMultiplayerButton()
         {
-            if (selectModeScreen.activeInHierarchy) return;
+            if (multiplayerScreen.activeInHierarchy) return;
 
+            ButtonAlphaState(quickMatchScreen, 0.3f, false);
+            
             DeactivatePages();
+
+            PlayerPrefs.SetInt("IsOfflineMultiplayer", 0);
+            PlayerPrefs.SetString("mode", "computer");
+            PlayerPrefs.Save();
 
             multiplayerScreen.SetActive(true);
         }
@@ -189,6 +212,12 @@ namespace BEKStudio {
             if (offlineMultiplayerScreen.activeInHierarchy) return;
 
             DeactivatePages();
+
+            ButtonAlphaState(practiceMatchScreen, 0.3f, false);
+
+            PlayerPrefs.SetInt("IsOfflineMultiplayer", 1);
+            PlayerPrefs.SetString("mode", "computer");
+            PlayerPrefs.Save();
 
             offlineMultiplayerScreen.SetActive(true);
         }
@@ -349,7 +378,19 @@ namespace BEKStudio {
             AudioController.Instance.PlayButtonSound();
             PlayerPrefs.SetString("pawnColor", pawnColor);
             PlayerPrefs.Save();
-            PawnSelectClose();
+
+            if(selectModeScreen.activeInHierarchy)
+                ButtonAlphaState(offlineModeButton, 1.0f, true);
+
+            if(multiplayerScreen.activeInHierarchy)
+                ButtonAlphaState(quickMatchScreen, 1.0f, true);
+
+            if(offlineMultiplayerScreen.activeInHierarchy)
+                ButtonAlphaState(practiceMatchScreen, 1.0f, true);
+
+            Debug.Log(multiplayerScreen.activeInHierarchy);
+            //call after offline button
+            //PawnSelectClose();
         }
 
         public void PawnSelectCloseBtn() {
@@ -360,7 +401,7 @@ namespace BEKStudio {
             PawnSelectClose();
         }
 
-        void PawnSelectClose() {
+        public void PawnSelectClose() {
             LeanTween.scale(pawnSelectPanel, Vector2.zero, 0.2f).setEaseInBack().setOnComplete(() => {
                 pawnSelectScreen.SetActive(false);
 
@@ -404,6 +445,16 @@ namespace BEKStudio {
             if (LeanTween.isTweening(playerCountPanel)) return;
 
             PlayerPrefs.DeleteKey("pawnSelect");
+
+            if (selectModeScreen.activeInHierarchy)
+                ButtonAlphaState(offlineModeButton, 0.3f, false);
+
+            if (multiplayerScreen.activeInHierarchy)
+                ButtonAlphaState(quickMatchScreen, 0.3f, false);
+
+            if (offlineMultiplayerScreen.activeInHierarchy)
+                ButtonAlphaState(practiceMatchScreen, 0.3f, false);
+
             PlayerCountClose();
         }
 

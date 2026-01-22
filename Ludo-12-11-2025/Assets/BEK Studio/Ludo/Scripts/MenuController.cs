@@ -71,7 +71,7 @@ namespace BEKStudio {
         void Start() {
 
             //Strat Splash Screen
-            //StartCoroutine(StartSplashScreen());
+            StartCoroutine(StartSplashScreen());
 
             if (PlayerPrefs.HasKey("pawnColor")) {
                 PlayerPrefs.DeleteKey("pawnColor");

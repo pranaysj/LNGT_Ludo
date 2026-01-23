@@ -431,6 +431,7 @@ namespace BEKStudio {
 
             if (PlayerPrefs.GetInt("coin") < entryFee) {
                 playerCountScreen.SetActive(false);
+                DeactivatePages();
                 StoreShow();
                 return;
             }

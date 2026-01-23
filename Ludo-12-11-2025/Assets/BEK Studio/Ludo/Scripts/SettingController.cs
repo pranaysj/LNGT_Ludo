@@ -21,6 +21,7 @@ public class SettingController : MonoBehaviour
 
     void OnSfxToggleChanged(bool isOn)
     {
+        AudioController.Instance.PlayButtonSound();
         AudioController.Instance.SetSFXEnable(isOn);
     }
 }

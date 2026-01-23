@@ -21,9 +21,9 @@ namespace BEKStudio {
         public TextMeshProUGUI topCoinText;
         [Header("Bottom")]
         public GameObject homeButton;
-        public GameObject ProfileButton;
-        public GameObject LockButton;
-        public GameObject StoreButton;
+        public GameObject profileButton;
+        public GameObject lockButton;
+        public GameObject storeButton;
         [Header("Middle")]
         public GameObject selectModeScreen;
         public GameObject offlineModeButton;
@@ -270,13 +270,13 @@ namespace BEKStudio {
                     homeButton.SetActive(true);
                     break;
                 case 1:
-                    ProfileButton.SetActive(true);
+                    profileButton.SetActive(true);
                     break;
                 case 2:
-                    LockButton.SetActive(true);
+                    lockButton.SetActive(true);
                     break;
                 case 3:
-                    StoreButton.SetActive(true);
+                    storeButton.SetActive(true);
                     break;
                 case 4:
                     settingScreen.SetActive(true);
@@ -348,9 +348,9 @@ namespace BEKStudio {
             AudioController.Instance.PlayButtonSound();
 
             homeButton.SetActive(false);
-            ProfileButton.SetActive(false);
-            LockButton.SetActive(false);
-            StoreButton.SetActive(false);
+            profileButton.SetActive(false);
+            lockButton.SetActive(false);
+            storeButton.SetActive(false);
             selectModeScreen.SetActive(false);
             multiplayerScreen.SetActive(false);
             offlineMultiplayerScreen.SetActive(false);

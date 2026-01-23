@@ -31,6 +31,7 @@ namespace BEKStudio {
         public GameObject quickMatchScreen;
         public GameObject offlineMultiplayerScreen;
         public GameObject practiceMatchScreen;
+        public GameObject settingScreen;
         [Header("Main")]
         public GameObject mainBottom;
         public GameObject mainBottomHomeActive;
@@ -71,7 +72,7 @@ namespace BEKStudio {
         void Start() {
 
             //Strat Splash Screen
-            StartCoroutine(StartSplashScreen());
+            //StartCoroutine(StartSplashScreen());
 
             if (PlayerPrefs.HasKey("pawnColor")) {
                 PlayerPrefs.DeleteKey("pawnColor");
@@ -277,6 +278,9 @@ namespace BEKStudio {
                 case 3:
                     StoreButton.SetActive(true);
                     break;
+                case 4:
+                    settingScreen.SetActive(true);
+                    break;
                 default:
                     break;
             }
@@ -350,6 +354,7 @@ namespace BEKStudio {
             selectModeScreen.SetActive(false);
             multiplayerScreen.SetActive(false);
             offlineMultiplayerScreen.SetActive(false);
+            settingScreen.SetActive(false);
         }
 
         public void StoreItemBtn(int id) {

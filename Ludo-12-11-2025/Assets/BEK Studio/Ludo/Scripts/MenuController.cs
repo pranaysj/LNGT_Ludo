@@ -11,11 +11,27 @@ namespace BEKStudio {
     public class MenuController : MonoBehaviour {
         public static MenuController Instance;
         public GameObject dontDestroyPrefab;
+        [Header("Splash Screen")]
+        public GameObject splashScreen;
+        public GameObject homePageScreen;
         public Sprite[] avatars;
         [Header("Top")]
         public Image topAvatarImg;
         public TextMeshProUGUI topUsernameText;
         public TextMeshProUGUI topCoinText;
+        [Header("Bottom")]
+        public GameObject homeButton;
+        public GameObject profileButton;
+        public GameObject lockButton;
+        public GameObject storeButton;
+        [Header("Middle")]
+        public GameObject selectModeScreen;
+        public GameObject offlineModeButton;
+        public GameObject multiplayerScreen;
+        public GameObject quickMatchScreen;
+        public GameObject offlineMultiplayerScreen;
+        public GameObject practiceMatchScreen;
+        public GameObject settingScreen;
         [Header("Main")]
         public GameObject mainBottom;
         public GameObject mainBottomHomeActive;
@@ -54,6 +70,10 @@ namespace BEKStudio {
         }
 
         void Start() {
+
+            //Strat Splash Screen
+            StartCoroutine(StartSplashScreen());
+
             if (PlayerPrefs.HasKey("pawnColor")) {
                 PlayerPrefs.DeleteKey("pawnColor");
             }
@@ -98,6 +118,22 @@ namespace BEKStudio {
 
             
             AdsManager.Instance.DestoryBannerAd();
+
+            Debug.Log("Persistent Data Path: " + Application.persistentDataPath);
+
+        }
+
+        private IEnumerator StartSplashScreen()
+        {
+            splashScreen.SetActive(true);
+            homePageScreen.SetActive(false);
+            float splashTime = 4.3f;
+
+            yield return new WaitForSeconds(splashTime);
+
+            splashScreen.SetActive(false);
+            homePageScreen.SetActive(true);
+
         }
 
         public void UpdateCoinText() {
@@ -133,6 +169,61 @@ namespace BEKStudio {
             mainBottomStoreActive.SetActive(storeScreen.activeInHierarchy);
         }
 
+        //++++Middle Panel Start
+        public void MiddlePlayButton()
+        {
+            if (selectModeScreen.activeInHierarchy) return;
+
+            DeactivatePages();
+
+            ButtonAlphaState(offlineModeButton, 0.3f, false);
+
+            PlayerPrefs.SetString("mode", "online");
+            PlayerPrefs.Save();
+
+            selectModeScreen.SetActive(true);
+        }
+        
+        private void ButtonAlphaState(GameObject gameObject, float alpha, bool enable)
+        {
+
+            Color color = gameObject.GetComponent<Image>().color;
+            Button button = gameObject.GetComponent<Button>();
+            button.interactable = enable;
+            color.a = alpha;
+        }
+
+        public void MiddleMultiplayerButton()
+        {
+            if (multiplayerScreen.activeInHierarchy) return;
+
+            ButtonAlphaState(quickMatchScreen, 0.3f, false);
+            
+            DeactivatePages();
+
+            PlayerPrefs.SetInt("IsOfflineMultiplayer", 0);
+            PlayerPrefs.SetString("mode", "computer");
+            PlayerPrefs.Save();
+
+            multiplayerScreen.SetActive(true);
+        }
+
+        public void MiddleOfflineMultiplayerButton()
+        {
+            if (offlineMultiplayerScreen.activeInHierarchy) return;
+
+            DeactivatePages();
+
+            ButtonAlphaState(practiceMatchScreen, 0.3f, false);
+
+            PlayerPrefs.SetInt("IsOfflineMultiplayer", 1);
+            PlayerPrefs.SetString("mode", "computer");
+            PlayerPrefs.Save();
+
+            offlineMultiplayerScreen.SetActive(true);
+        }
+
+        //OLD FUNCTIONS
         public void MainOnlineBtn() {
             AudioController.Instance.PlayButtonSound();
             if (onlineScreen.activeInHierarchy) return;
@@ -163,48 +254,107 @@ namespace BEKStudio {
             PawnSelectShow();
         }
 
-        public void MainHomeBtn() {
+        //----Middle Panel End
+
+
+        //++++Bottom Panel Start
+        public void BottomButtons(int index)
+        {
+            AudioController.Instance.PlayButtonSound();
+
+            DeactivatePages();
+
+            switch (index)
+            {
+                case 0:
+                    homeButton.SetActive(true);
+                    break;
+                case 1:
+                    profileButton.SetActive(true);
+                    break;
+                case 2:
+                    lockButton.SetActive(true);
+                    break;
+                case 3:
+                    storeButton.SetActive(true);
+                    break;
+                case 4:
+                    settingScreen.SetActive(true);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+        //OLD FUNCTIONS
+        public void MainHomeBtn()
+        {
             AudioController.Instance.PlayButtonSound();
             if (homeScreen.activeInHierarchy) return;
 
-            if (storeScreen.activeInHierarchy && !LeanTween.isTweening(storePanel)) {
+            if (storeScreen.activeInHierarchy && !LeanTween.isTweening(storePanel))
+            {
                 StoreClose();
             }
         }
 
-        public void MainWatchVideoBtn() {
+        public void MainWatchVideoBtn()
+        {
             AdsManager.Instance.ShowRewardedAd();
         }
 
-        public void MainStoreBtn() {
+        public void MainStoreBtn()
+        {
             AudioController.Instance.PlayButtonSound();
             if (storeScreen.activeInHierarchy) return;
 
             StoreShow();
         }
 
-        void StoreShow() {
+        void StoreShow()
+        {
             storePanel.transform.localScale = Vector2.zero;
             storeScreen.SetActive(true);
 
-            if (homeScreen.activeInHierarchy) {
+            if (homeScreen.activeInHierarchy)
+            {
                 HomeClose();
             }
 
-            LeanTween.scale(storePanel, Vector2.one, 0.2f).setDelay(0.41f).setEaseOutBack().setOnStart(() => {
+            LeanTween.scale(storePanel, Vector2.one, 0.2f).setDelay(0.41f).setEaseOutBack().setOnStart(() =>
+            {
                 MainBottomCheckTabs();
             });
         }
 
-        void StoreClose(bool showHome = true) {
-            LeanTween.scale(storePanel, Vector2.zero, 0.2f).setEaseInBack().setOnComplete(() => {
+        void StoreClose(bool showHome = true)
+        {
+            LeanTween.scale(storePanel, Vector2.zero, 0.2f).setEaseInBack().setOnComplete(() =>
+            {
                 storeScreen.SetActive(false);
 
-                if (showHome) {
+                if (showHome)
+                {
                     HomeShow();
                     MainBottomCheckTabs();
                 }
             });
+        }
+        //----Bottom Panel Stop
+
+        private void DeactivatePages()
+        {
+            AudioController.Instance.PlayButtonSound();
+
+            homeButton.SetActive(false);
+            profileButton.SetActive(false);
+            lockButton.SetActive(false);
+            storeButton.SetActive(false);
+            selectModeScreen.SetActive(false);
+            multiplayerScreen.SetActive(false);
+            offlineMultiplayerScreen.SetActive(false);
+            settingScreen.SetActive(false);
         }
 
         public void StoreItemBtn(int id) {
@@ -233,7 +383,19 @@ namespace BEKStudio {
             AudioController.Instance.PlayButtonSound();
             PlayerPrefs.SetString("pawnColor", pawnColor);
             PlayerPrefs.Save();
-            PawnSelectClose();
+
+            if(selectModeScreen.activeInHierarchy)
+                ButtonAlphaState(offlineModeButton, 1.0f, true);
+
+            if(multiplayerScreen.activeInHierarchy)
+                ButtonAlphaState(quickMatchScreen, 1.0f, true);
+
+            if(offlineMultiplayerScreen.activeInHierarchy)
+                ButtonAlphaState(practiceMatchScreen, 1.0f, true);
+
+            Debug.Log(multiplayerScreen.activeInHierarchy);
+            //call after offline button
+            //PawnSelectClose();
         }
 
         public void PawnSelectCloseBtn() {
@@ -244,7 +406,7 @@ namespace BEKStudio {
             PawnSelectClose();
         }
 
-        void PawnSelectClose() {
+        public void PawnSelectClose() {
             LeanTween.scale(pawnSelectPanel, Vector2.zero, 0.2f).setEaseInBack().setOnComplete(() => {
                 pawnSelectScreen.SetActive(false);
 
@@ -269,6 +431,7 @@ namespace BEKStudio {
 
             if (PlayerPrefs.GetInt("coin") < entryFee) {
                 playerCountScreen.SetActive(false);
+                DeactivatePages();
                 StoreShow();
                 return;
             }
@@ -288,6 +451,16 @@ namespace BEKStudio {
             if (LeanTween.isTweening(playerCountPanel)) return;
 
             PlayerPrefs.DeleteKey("pawnSelect");
+
+            if (selectModeScreen.activeInHierarchy)
+                ButtonAlphaState(offlineModeButton, 0.3f, false);
+
+            if (multiplayerScreen.activeInHierarchy)
+                ButtonAlphaState(quickMatchScreen, 0.3f, false);
+
+            if (offlineMultiplayerScreen.activeInHierarchy)
+                ButtonAlphaState(practiceMatchScreen, 0.3f, false);
+
             PlayerCountClose();
         }
 

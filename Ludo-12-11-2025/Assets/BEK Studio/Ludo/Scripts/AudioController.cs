@@ -12,13 +12,26 @@ namespace BEKStudio {
         public AudioSource buttonAudioSource;
         public AudioClip buttonClip;
 
+        [Header("SFX Effect")]
+        public bool isSFXEnable = true;
+        private const string SFX_PREF_KEY = "SFX_ENABLED";
+
+
         void Awake() {
             if (Instance == null) {
                 Instance = this;
+                isSFXEnable = PlayerPrefs.GetInt(SFX_PREF_KEY, 1) == 1;
             }
         }
 
+        public void SetSFXEnable(bool isEnable) {
+            isSFXEnable = isEnable;
+            PlayerPrefs.SetInt(SFX_PREF_KEY, isSFXEnable ? 1 : 0);
+            PlayerPrefs.Save();
+        }
+
         public void PlayPawnMoveSound() {
+            if (!isSFXEnable) return;
             if (pawnMoveAudioSource == null) return;
             if (pawnMoveClip == null) return;
 
@@ -27,6 +40,7 @@ namespace BEKStudio {
         }
 
         public void PlayDiceSound() {
+            if (!isSFXEnable) return;
             if (diceAudioSource == null) return;
             if (diceClip == null) return;
 
@@ -35,6 +49,7 @@ namespace BEKStudio {
         }
 
         public void PlayButtonSound() {
+            if (!isSFXEnable) return;
             if (buttonAudioSource == null) return;
             if (buttonClip == null) return;
 

@@ -7,8 +7,10 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 
 
-namespace BEKStudio {
-    public class MenuController : MonoBehaviour {
+namespace BEKStudio
+{
+    public class MenuController : MonoBehaviour
+    {
         public static MenuController Instance;
         public GameObject dontDestroyPrefab;
         [Header("Splash Screen")]
@@ -32,6 +34,7 @@ namespace BEKStudio {
         public GameObject offlineMultiplayerScreen;
         public GameObject practiceMatchScreen;
         public GameObject settingScreen;
+        public GameObject linkGameObject;
         [Header("Main")]
         public GameObject mainBottom;
         public GameObject mainBottomHomeActive;
@@ -61,37 +64,46 @@ namespace BEKStudio {
         public GameObject usernameScreen;
         public GameObject usernamePanel;
         public TMP_InputField usernameInput;
+        [Header("Links")]
+        public string BattleLink;
+        public string InviteLink;
 
 
-        void Awake() {
-            if (Instance == null) {
+        void Awake()
+        {
+            if (Instance == null)
+            {
                 Instance = this;
             }
         }
 
-        void Start() {
+        void Start()
+        {
 
             //Strat Splash Screen
             //StartCoroutine(StartSplashScreen());
 
-            if (PlayerPrefs.HasKey("pawnColor")) {
+            if (PlayerPrefs.HasKey("pawnColor"))
+            {
                 PlayerPrefs.DeleteKey("pawnColor");
             }
 
-            if(PlayerPrefs.HasKey("IsOfflineMultiplayer"))
+            if (PlayerPrefs.HasKey("IsOfflineMultiplayer"))
             {
                 PlayerPrefs.DeleteKey("IsOfflineMultiplayer");
             }
 
             GameObject dontDestroyObj = GameObject.Find("DontDestroy");
-            if (dontDestroyObj == null){
+            if (dontDestroyObj == null)
+            {
                 dontDestroyObj = Instantiate(dontDestroyPrefab);
                 dontDestroyObj.name = "DontDestroy";
                 DontDestroyOnLoad(dontDestroyObj);
             }
 
 
-            if (!PlayerPrefs.HasKey("firstTime")) {
+            if (!PlayerPrefs.HasKey("firstTime"))
+            {
                 PlayerPrefs.SetInt("avatar", Random.Range(0, avatars.Length));
                 PlayerPrefs.SetInt("coin", Constants.START_COIN);
                 PlayerPrefs.SetInt("firstTime", 1);
@@ -101,7 +113,8 @@ namespace BEKStudio {
             topAvatarImg.sprite = avatars[PlayerPrefs.GetInt("avatar")];
             UpdateCoinText();
 
-            if (!PlayerPrefs.HasKey("username")) {
+            if (!PlayerPrefs.HasKey("username"))
+            {
 #if UNITY_WEBGL
                 string rand = Random.Range(999, 999999).ToString();
                 PlayerPrefs.SetString("username", "Player" + rand);
@@ -111,12 +124,14 @@ namespace BEKStudio {
 #else
                 UsernameShow();
 #endif
-            } else {
+            }
+            else
+            {
                 topUsernameText.text = PlayerPrefs.GetString("username");
                 HomeShow();
             }
 
-            
+
             AdsManager.Instance.DestoryBannerAd();
 
             Debug.Log("Persistent Data Path: " + Application.persistentDataPath);
@@ -136,12 +151,14 @@ namespace BEKStudio {
 
         }
 
-        public void UpdateCoinText() {
+        public void UpdateCoinText()
+        {
             int coin = PlayerPrefs.GetInt("coin");
             topCoinText.text = coin == 0 ? "0" : coin.ToString("###,###,###");
         }
 
-        void HomeShow() {
+        void HomeShow()
+        {
             homeTitle.GetComponent<Image>().color = new Color(1, 1, 1, 0);
             homeOnline.anchoredPosition = new Vector2(-765f, -24.7f);
             homeComputer.anchoredPosition = new Vector2(765f, -461.7f);
@@ -156,15 +173,18 @@ namespace BEKStudio {
             LeanTween.move(homecomputer_offlinemultiplayer, new Vector2(0, -592f), 0.2f).setDelay(0.3f);
         }
 
-        void HomeClose() {
+        void HomeClose()
+        {
             LeanTween.alpha(homeTitle, 0, 0.2f);
             LeanTween.move(homeOnline, new Vector2(-765f, -24.7f), 0.2f).setDelay(0.1f);
-            LeanTween.move(homeComputer, new Vector2(765f, -461.7f), 0.2f).setDelay(0.2f).setOnComplete(() => {
+            LeanTween.move(homeComputer, new Vector2(765f, -461.7f), 0.2f).setDelay(0.2f).setOnComplete(() =>
+            {
                 homeScreen.SetActive(false);
             });
         }
 
-        void MainBottomCheckTabs() {
+        void MainBottomCheckTabs()
+        {
             mainBottomHomeActive.SetActive(homeScreen.activeInHierarchy);
             mainBottomStoreActive.SetActive(storeScreen.activeInHierarchy);
         }
@@ -183,7 +203,7 @@ namespace BEKStudio {
 
             selectModeScreen.SetActive(true);
         }
-        
+
         private void ButtonAlphaState(GameObject gameObject, float alpha, bool enable)
         {
 
@@ -198,7 +218,7 @@ namespace BEKStudio {
             if (multiplayerScreen.activeInHierarchy) return;
 
             ButtonAlphaState(quickMatchScreen, 0.3f, false);
-            
+
             DeactivatePages();
 
             PlayerPrefs.SetInt("IsOfflineMultiplayer", 0);
@@ -224,7 +244,8 @@ namespace BEKStudio {
         }
 
         //OLD FUNCTIONS
-        public void MainOnlineBtn() {
+        public void MainOnlineBtn()
+        {
             AudioController.Instance.PlayButtonSound();
             if (onlineScreen.activeInHierarchy) return;
 
@@ -233,7 +254,8 @@ namespace BEKStudio {
             PlayerCountShow();
         }
 
-        public void MainVsComputerBtn() {
+        public void MainVsComputerBtn()
+        {
             AudioController.Instance.PlayButtonSound();
             if (pawnSelectScreen.activeInHierarchy) return;
 
@@ -357,40 +379,45 @@ namespace BEKStudio {
             settingScreen.SetActive(false);
         }
 
-        public void StoreItemBtn(int id) {
+        public void StoreItemBtn(int id)
+        {
             Purchaser.Instance.BuyConsumable(id);
         }
 
-        public void StoreRestoreBtn() {
+        public void StoreRestoreBtn()
+        {
             Purchaser.Instance.RestorePurchases();
         }
 
-        public void StoreCloseBtn() {
+        public void StoreCloseBtn()
+        {
             AudioController.Instance.PlayButtonSound();
             if (LeanTween.isTweening(storePanel)) return;
 
             StoreClose();
         }
 
-        void PawnSelectShow() {
+        void PawnSelectShow()
+        {
             pawnSelectPanel.transform.localScale = Vector2.zero;
             pawnSelectScreen.SetActive(true);
 
             LeanTween.scale(pawnSelectPanel, Vector2.one, 0.2f).setEaseOutBack();
         }
 
-        public void PawnSelectItemBtn(string pawnColor) {
+        public void PawnSelectItemBtn(string pawnColor)
+        {
             AudioController.Instance.PlayButtonSound();
             PlayerPrefs.SetString("pawnColor", pawnColor);
             PlayerPrefs.Save();
 
-            if(selectModeScreen.activeInHierarchy)
+            if (selectModeScreen.activeInHierarchy)
                 ButtonAlphaState(offlineModeButton, 1.0f, true);
 
-            if(multiplayerScreen.activeInHierarchy)
+            if (multiplayerScreen.activeInHierarchy)
                 ButtonAlphaState(quickMatchScreen, 1.0f, true);
 
-            if(offlineMultiplayerScreen.activeInHierarchy)
+            if (offlineMultiplayerScreen.activeInHierarchy)
                 ButtonAlphaState(practiceMatchScreen, 1.0f, true);
 
             Debug.Log(multiplayerScreen.activeInHierarchy);
@@ -398,7 +425,8 @@ namespace BEKStudio {
             //PawnSelectClose();
         }
 
-        public void PawnSelectCloseBtn() {
+        public void PawnSelectCloseBtn()
+        {
             AudioController.Instance.PlayButtonSound();
             if (LeanTween.isTweening(pawnSelectPanel)) return;
 
@@ -406,17 +434,21 @@ namespace BEKStudio {
             PawnSelectClose();
         }
 
-        public void PawnSelectClose() {
-            LeanTween.scale(pawnSelectPanel, Vector2.zero, 0.2f).setEaseInBack().setOnComplete(() => {
+        public void PawnSelectClose()
+        {
+            LeanTween.scale(pawnSelectPanel, Vector2.zero, 0.2f).setEaseInBack().setOnComplete(() =>
+            {
                 pawnSelectScreen.SetActive(false);
 
-                if (PlayerPrefs.HasKey("pawnColor")) {
+                if (PlayerPrefs.HasKey("pawnColor"))
+                {
                     PlayerCountShow();
                 }
             });
         }
 
-        void PlayerCountShow() {
+        void PlayerCountShow()
+        {
             playerCountPanel.transform.localScale = Vector2.zero;
             playerCountEntryFee.text = PhotonController.Instance.gameEntryPrice().ToString("###,###,###");
             playerCountScreen.SetActive(true);
@@ -424,29 +456,35 @@ namespace BEKStudio {
             LeanTween.scale(playerCountPanel, Vector2.one, 0.2f).setEaseOutBack();
         }
 
-        public void PlayerCountItemBtn(int playerCount) {
+        public void PlayerCountItemBtn(int playerCount)
+        {
             AudioController.Instance.PlayButtonSound();
 
             int entryFee = PhotonController.Instance.gameEntryPrice();
 
-            if (PlayerPrefs.GetInt("coin") < entryFee) {
+            if (PlayerPrefs.GetInt("coin") < entryFee)
+            {
                 playerCountScreen.SetActive(false);
                 DeactivatePages();
                 StoreShow();
                 return;
             }
-            
+
             PlayerPrefs.SetInt("playerCount", playerCount);
             PlayerPrefs.Save();
-            if (PhotonController.Instance.gameMode() == "online") {
+            if (PhotonController.Instance.gameMode() == "online")
+            {
                 OnlineShow();
                 PhotonController.Instance.Connect();
-            } else {
+            }
+            else
+            {
                 SceneManager.LoadScene("Game");
             }
         }
 
-        public void PlayerCountCloseBtn() {
+        public void PlayerCountCloseBtn()
+        {
             AudioController.Instance.PlayButtonSound();
             if (LeanTween.isTweening(playerCountPanel)) return;
 
@@ -464,13 +502,16 @@ namespace BEKStudio {
             PlayerCountClose();
         }
 
-        void PlayerCountClose() {
-            LeanTween.scale(playerCountPanel, Vector2.zero, 0.2f).setEaseInBack().setOnComplete(() => {
+        void PlayerCountClose()
+        {
+            LeanTween.scale(playerCountPanel, Vector2.zero, 0.2f).setEaseInBack().setOnComplete(() =>
+            {
                 playerCountScreen.SetActive(false);
             });
         }
 
-        public void OnlineShow() {
+        public void OnlineShow()
+        {
             onlineCancelButton.interactable = true;
             onlinePanel.transform.localScale = Vector2.zero;
             onlineInfoText.text = "Connecting to server...";
@@ -479,40 +520,50 @@ namespace BEKStudio {
             LeanTween.scale(onlinePanel, Vector2.one, 0.2f).setEaseOutBack();
         }
 
-        public void OnlineClose() {
+        public void OnlineClose()
+        {
             if (LeanTween.isTweening(onlinePanel)) return;
 
-            LeanTween.scale(onlinePanel, Vector2.zero, 0.2f).setEaseInBack().setOnComplete(() => {
+            LeanTween.scale(onlinePanel, Vector2.zero, 0.2f).setEaseInBack().setOnComplete(() =>
+            {
                 onlineScreen.SetActive(false);
             });
         }
 
-        public void OnlineInfoMsg(string msg) {
+        public void OnlineInfoMsg(string msg)
+        {
             onlineInfoText.text = msg;
         }
 
-        public void OnlineCancelBtn() {
+        public void OnlineCancelBtn()
+        {
             AudioController.Instance.PlayButtonSound();
             onlineCancelButton.interactable = false;
             PhotonNetwork.AutomaticallySyncScene = false;
 
-            if (PhotonNetwork.IsConnectedAndReady) {
+            if (PhotonNetwork.IsConnectedAndReady)
+            {
                 PhotonNetwork.Disconnect();
-            } else {
+            }
+            else
+            {
                 OnlineClose();
             }
         }
 
-        void UsernameShow() {
+        void UsernameShow()
+        {
             usernamePanel.transform.localScale = Vector2.zero;
             usernameScreen.SetActive(true);
 
             LeanTween.scale(usernamePanel, Vector2.one, 0.2f).setEaseOutBack();
         }
 
-        public void UsernameSaveBtn() {
+        public void UsernameSaveBtn()
+        {
             AudioController.Instance.PlayButtonSound();
-            if (usernameInput.text.Length >= 4) {
+            if (usernameInput.text.Length >= 4)
+            {
                 PlayerPrefs.SetString("username", usernameInput.text);
                 PlayerPrefs.Save();
                 topUsernameText.text = usernameInput.text;
@@ -520,13 +571,39 @@ namespace BEKStudio {
             }
         }
 
-        void UsernameClose() {
-            LeanTween.scale(usernamePanel, Vector2.zero, 0.2f).setEaseInBack().setOnComplete(() => {
+        void UsernameClose()
+        {
+            LeanTween.scale(usernamePanel, Vector2.zero, 0.2f).setEaseInBack().setOnComplete(() =>
+            {
                 usernameScreen.SetActive(false);
 
-                if (!homeScreen.activeInHierarchy) {
+                if (!homeScreen.activeInHierarchy)
+                {
                     HomeShow();
                 }
+            });
+        }
+
+        public void CopyBattleLink()
+        {
+            GUIUtility.systemCopyBuffer = BattleLink;
+            LinkTextAnimation();
+        }
+
+        public void CopyInviteLink()
+        {
+            GUIUtility.systemCopyBuffer = InviteLink;
+            LinkTextAnimation();
+        }
+        private void LinkTextAnimation()
+        {
+            linkGameObject.SetActive(true);
+            LeanTween.scale(linkGameObject, Vector2.one, 0.2f).setEaseOutBack().setOnComplete(() =>
+            {
+                LeanTween.scale(linkGameObject, Vector2.zero, 0.2f).setDelay(1.0f).setEaseInBack().setOnComplete(() =>
+                {
+                    linkGameObject.SetActive(false);
+                });
             });
         }
 

@@ -22,7 +22,6 @@ namespace BEKStudio {
         public bool isMusicEnable = true;
         private const string MUSIC_PREF_KEY = "SFX_ENABLED";
 
-
         void Awake() {
             if (Instance == null) {
                 Instance = this;

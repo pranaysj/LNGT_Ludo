@@ -34,6 +34,7 @@ namespace BEKStudio
         public GameObject offlineMultiplayerScreen;
         public GameObject practiceMatchScreen;
         public GameObject settingScreen;
+        public GameObject rewardScreen;
         public GameObject linkGameObject;
         [Header("Main")]
         public GameObject mainBottom;

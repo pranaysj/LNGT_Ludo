@@ -9,20 +9,6 @@ public class RewardController : MonoBehaviour
 {
     public static RewardController Instance;
 
-
-    [Header("UI")]
-    [SerializeField] private Button claimButton;
-    [SerializeField] private TMP_Text timerText;
-    [SerializeField] private Image progressBar; // FILL IMAGE
-
-    [Header("Reward")]
-    [SerializeField] private int coinReward = 5;
-
-    private const string LAST_CLAIM_KEY = "DailyChest_LastClaim";
-    private readonly TimeSpan COOLDOWN = TimeSpan.FromHours(24);
-
-    private DateTime lastClaimTime;
-
     private void Awake()
     {
         if (Instance == null)
@@ -31,84 +17,147 @@ public class RewardController : MonoBehaviour
         }
     }
 
+    [Header("Claim Button")]
+    [SerializeField] private Button claimAllButton;
+
+    [Header("Daily Chest UI")]
+    [SerializeField] private TMP_Text dailyTimerText;
+    [SerializeField] private Image dailyBar;
+
+    [Header("Weekly Chest UI")]
+    [SerializeField] private TMP_Text weeklyTimerText;
+    [SerializeField] private Image weeklyBar;
+
+    [Header("Special Chest UI")]
+    [SerializeField] private TMP_Text specialTimerText;
+    [SerializeField] private Image specialBar;
+
+    private const string DAILY_KEY = "Daily_LastClaim";
+    private const string WEEKLY_KEY = "Weekly_LastClaim";
+    private const string SPECIAL_KEY = "Special_LastClaim";
+
+    private readonly TimeSpan DAILY_CD = TimeSpan.FromHours(24);
+    private readonly TimeSpan WEEKLY_CD = TimeSpan.FromDays(7);
+    private readonly TimeSpan SPECIAL_CD = TimeSpan.FromDays(14);
+
     void Start()
     {
-        LoadLastClaimTime();
-        UpdateUI();
+        UpdateAllUI();
     }
 
     void Update()
     {
-        UpdateUI();
+        UpdateAllUI();
     }
 
-    bool CanClaim()
+    // ===================== CLAIM ALL =====================
+
+    public void ClaimAll()
     {
-        return DateTime.UtcNow - lastClaimTime >= COOLDOWN;
-    }
+        int totalCoins = 0;
 
-    public void Claim()
-    {
-        if (!CanClaim()) return;
-
-        // Give reward
-        AddCoins(coinReward);
-
-        // Save claim time
-        lastClaimTime = DateTime.UtcNow;
-        PlayerPrefs.SetString(LAST_CLAIM_KEY, lastClaimTime.ToString());
-        PlayerPrefs.Save();
-
-        UpdateUI();
-    }
-
-    void UpdateUI()
-    {
-        if (CanClaim())
+        if (CanClaim(DAILY_KEY, DAILY_CD))
         {
-            claimButton.interactable = true;
+            totalCoins += 5;
+            SaveClaimTime(DAILY_KEY);
+        }
+
+        if (CanClaim(WEEKLY_KEY, WEEKLY_CD))
+        {
+            totalCoins += 20;
+            SaveClaimTime(WEEKLY_KEY);
+        }
+
+        if (CanClaim(SPECIAL_KEY, SPECIAL_CD))
+        {
+            totalCoins += 50;
+            SaveClaimTime(SPECIAL_KEY);
+        }
+
+        if (totalCoins > 0)
+        {
+            PlayerPrefs.Save();
+            AddCoins(totalCoins);
+        }
+
+        UpdateAllUI();
+    }
+
+    // ===================== UI UPDATE =====================
+
+    void UpdateAllUI()
+    {
+        bool anyAvailable = false;
+
+        UpdateChestUI(DAILY_KEY, DAILY_CD, dailyTimerText, dailyBar, ref anyAvailable);
+        UpdateChestUI(WEEKLY_KEY, WEEKLY_CD, weeklyTimerText, weeklyBar, ref anyAvailable);
+        UpdateChestUI(SPECIAL_KEY, SPECIAL_CD, specialTimerText, specialBar, ref anyAvailable);
+
+        claimAllButton.interactable = anyAvailable;
+    }
+
+    void UpdateChestUI(
+        string key,
+        TimeSpan cooldown,
+        TMP_Text timerText,
+        Image bar,
+        ref bool anyAvailable)
+    {
+        DateTime lastClaim = GetLastClaimTime(key, cooldown);
+        TimeSpan elapsed = DateTime.UtcNow - lastClaim;
+
+        if (elapsed >= cooldown)
+        {
             timerText.text = "READY";
-            progressBar.fillAmount = 1f;
+            bar.fillAmount = 1f;
+            anyAvailable = true;
         }
         else
         {
-            claimButton.interactable = false;
-
-            TimeSpan elapsed = DateTime.UtcNow - lastClaimTime;
-            TimeSpan remaining = COOLDOWN - elapsed;
-
+            TimeSpan remaining = cooldown - elapsed;
             timerText.text = FormatTime(remaining);
 
-            // Fill decreases as time passes
-            float progress = 1f - (float)(elapsed.TotalSeconds / COOLDOWN.TotalSeconds);
-            progressBar.fillAmount = Mathf.Clamp01(progress);
+            float progress = (float)(elapsed.TotalSeconds / cooldown.TotalSeconds);
+            bar.fillAmount = Mathf.Clamp01(progress);
         }
+    }
+
+    // ===================== HELPERS =====================
+
+    bool CanClaim(string key, TimeSpan cooldown)
+    {
+        return DateTime.UtcNow - GetLastClaimTime(key, cooldown) >= cooldown;
+    }
+
+    DateTime GetLastClaimTime(string key, TimeSpan cooldown)
+    {
+        if (PlayerPrefs.HasKey(key))
+            return DateTime.Parse(PlayerPrefs.GetString(key));
+
+        return DateTime.UtcNow - cooldown; // first-time claim allowed
+    }
+
+    void SaveClaimTime(string key)
+    {
+        PlayerPrefs.SetString(key, DateTime.UtcNow.ToString());
     }
 
     string FormatTime(TimeSpan time)
     {
-        return $"{time.Hours:D2}:{time.Minutes:D2}:{time.Seconds:D2}";
+        int totalHours = time.Days * 24 + time.Hours;
+
+        if(time.Days > 1)
+            return $"{time.Days} days";
+
+        return $"{totalHours:D2}:{time.Minutes:D2}:{time.Seconds:D2}";
     }
 
-    void LoadLastClaimTime()
-    {
-        if (PlayerPrefs.HasKey(LAST_CLAIM_KEY))
-        {
-            lastClaimTime = DateTime.Parse(
-                PlayerPrefs.GetString(LAST_CLAIM_KEY)
-            );
-        }
-        else
-        {
-            // Allows immediate first claim
-            lastClaimTime = DateTime.UtcNow - COOLDOWN;
-        }
-    }
+     //===================== ECONOMY =====================
 
     void AddCoins(int amount)
     {
-        // Replace with your coin system
-        Debug.Log($"Daily Chest claimed: +{amount} coins");
+        Debug.Log($"Claimed total coins: {amount}");
+        PlayerPrefs.SetInt("coin", PlayerPrefs.GetInt("coin") + amount);
     }
 
 }

@@ -20,7 +20,6 @@ public class OnClickProfileButton : MonoBehaviour
 public Sprite[] avatars;                 // ALL avatars list
 public Image homeAvatarImg;              // Home page avatar
 public Image profileCenterAvatarImg;     // Profile center avatar
-public Image profileLeftAvatarImg;       // Profile left avatar
 
 
     [Header("Profile Username")]
@@ -33,9 +32,8 @@ public Image profileLeftAvatarImg;       // Profile left avatar
     [Header("Buttons")]
     public GameObject editButton;
     public GameObject saveButton;
-    private TextMeshPro username;
-
-    //public GameObject EditAvtarButton;
+    public GameObject EditAvtarButton;
+    public GameObject EditavatarPanel;
 
     void OnEnable()
     {
@@ -56,7 +54,7 @@ public Image profileLeftAvatarImg;       // Profile left avatar
         nameInputField.gameObject.SetActive(true);
 
         profileUsernameText.gameObject.SetActive(false);
-        //EditAvtarButton.SetActive(true);
+        EditAvtarButton.SetActive(true);
         inputFieldRoot.SetActive(true);
 
         saveButton.SetActive(true);
@@ -70,19 +68,20 @@ public Image profileLeftAvatarImg;       // Profile left avatar
     {
         string newName = nameInputField.text;
 
-        if (string.IsNullOrEmpty(newName) || newName.Length < 3)
+        if (string.IsNullOrEmpty(newName) || newName.Length < 2)
             return;
 
         // SINGLE SOURCE UPDATE
         PhotonNetwork.NickName = newName;
         PlayerPrefs.SetString("username", newName);
         PlayerPrefs.Save();
-        username.text = PlayerPrefs.GetInt("username").ToString();
+
         RefreshUsernameFromServer();
 
         nameInputField.gameObject.SetActive(false);
         profileUsernameText.gameObject.SetActive(true);
         inputFieldRoot.SetActive(false);
+        EditAvtarButton.SetActive(false);
         saveButton.SetActive(false);
         editButton.SetActive(true);
     }
@@ -99,57 +98,65 @@ public Image profileLeftAvatarImg;       // Profile left avatar
 
 
     public void RefreshUsernameFromServer()
-{
-    string finalName;
+    {
+        string finalName;
 
-    if (!string.IsNullOrEmpty(PhotonNetwork.NickName))
-        finalName = PhotonNetwork.NickName;
-    else
-        finalName = PlayerPrefs.GetString("username", "Player");
+        Debug.Log("ENTER");
 
-    // Center profile name
-    profileUsernameText.text = finalName;
+        if (!string.IsNullOrEmpty(PhotonNetwork.NickName))
+            finalName = PhotonNetwork.NickName;
+        else
+            finalName = PlayerPrefs.GetString("username", "Player");
 
-    //  Left side icon ke paas wala name (3rd place)
-    if (thirdUsernameText != null)
-        thirdUsernameText.text = finalName;
-}
+        // Center profile name
+        profileUsernameText.text = finalName;
+
+        //  Left side icon ke paas wala name (3rd place)
+        if (thirdUsernameText != null)
+            thirdUsernameText.text = finalName;
+    }
 
 
 public void OnClickEditAvatar()
 {
    
-    
+    editButton.SetActive(false);
+    EditavatarPanel.SetActive(true);
+    EditAvtarButton.SetActive(true);
 
 }
 
 public void RefreshAvatarFromServer()
 {
+    if (avatars == null || avatars.Length == 0)
+    {
+        Debug.LogError("Avatars list empty");
+        return;
+    }
+
     int avatarIndex = PlayerPrefs.GetInt("avatar", 0);
 
     if (avatarIndex < 0 || avatarIndex >= avatars.Length)
         avatarIndex = 0;
 
-    // Home page avatar
+    Sprite avatarSprite = avatars[avatarIndex];
+
+    
     if (homeAvatarImg != null)
-        homeAvatarImg.sprite = avatars[avatarIndex];
+        homeAvatarImg.sprite = avatarSprite;
 
-    // Profile center avatar
+    
     if (profileCenterAvatarImg != null)
-        profileCenterAvatarImg.sprite = avatars[avatarIndex];
-
-    // Profile left avatar
-    if (profileLeftAvatarImg != null)
-        profileLeftAvatarImg.sprite = avatars[avatarIndex];
-
+        profileCenterAvatarImg.sprite = avatarSprite;
 }
+
 
 public void OnAvatarSelected(int avatarIndex)
 {
     PlayerPrefs.SetInt("avatar", avatarIndex);
     PlayerPrefs.Save();
 
-    RefreshAvatarFromServer(); // 👈 teeno jagah update
+    RefreshAvatarFromServer(); 
 }
 
 

@@ -83,8 +83,6 @@ public class RewardController : MonoBehaviour
         UpdateAllUI();
     }
 
-    // ===================== UI UPDATE =====================
-
     void UpdateAllUI()
     {
         bool anyAvailable = false;
@@ -122,7 +120,6 @@ public class RewardController : MonoBehaviour
         }
     }
 
-    // ===================== HELPERS =====================
 
     bool CanClaim(string key, TimeSpan cooldown)
     {
@@ -152,7 +149,6 @@ public class RewardController : MonoBehaviour
         return $"{totalHours:D2}:{time.Minutes:D2}:{time.Seconds:D2}";
     }
 
-     //===================== ECONOMY =====================
 
     void AddCoins(int amount)
     {

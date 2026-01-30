@@ -82,7 +82,7 @@ namespace BEKStudio
         {
 
             //Strat Splash Screen
-            //StartCoroutine(StartSplashScreen());
+            StartCoroutine(StartSplashScreen());
 
             if (PlayerPrefs.HasKey("pawnColor"))
             {
@@ -155,8 +155,23 @@ namespace BEKStudio
         public void UpdateCoinText()
         {
             int coin = PlayerPrefs.GetInt("coin");
-            topCoinText.text = coin == 0 ? "0" : coin.ToString("###,###,###");
+            topCoinText.text = FormatCoins(coin);
         }
+
+        string FormatCoins(long coins)
+        {
+            if (coins < 1000)
+                return coins.ToString();
+
+            if (coins < 1_000_000)
+                return (coins / 1000f).ToString("0.#") + "k";
+
+            if (coins < 1_000_000_000)
+                return (coins / 1_000_000f).ToString("0.#") + "M";
+
+            return (coins / 1_000_000_000f).ToString("0.#") + "B";
+        }
+
 
         void HomeShow()
         {

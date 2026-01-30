@@ -140,9 +140,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 118.5
-        width: 85
-        height: 118.5
+        y: 2338.5
+        width: 1753
+        height: 2338.5
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -160,10 +160,10 @@ TextureImporter:
       name: Profiles_Images_1
       rect:
         serializedVersion: 2
-        x: 85
-        y: 118.5
-        width: 85
-        height: 118.5
+        x: 1753
+        y: 2338.5
+        width: 1753
+        height: 2338.5
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -181,10 +181,10 @@ TextureImporter:
       name: Profiles_Images_2
       rect:
         serializedVersion: 2
-        x: 170
-        y: 118.5
-        width: 85
-        height: 118.5
+        x: 3506
+        y: 2338.5
+        width: 1753
+        height: 2338.5
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -202,10 +202,10 @@ TextureImporter:
       name: Profiles_Images_3
       rect:
         serializedVersion: 2
-        x: 255
-        y: 118.5
-        width: 85
-        height: 118.5
+        x: 5259
+        y: 2338.5
+        width: 1753
+        height: 2338.5
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -225,8 +225,8 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0.5
-        width: 85
-        height: 118.5
+        width: 1753
+        height: 2338.5
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -244,10 +244,10 @@ TextureImporter:
       name: Profiles_Images_5
       rect:
         serializedVersion: 2
-        x: 85
+        x: 1753
         y: 0.5
-        width: 85
-        height: 118.5
+        width: 1753
+        height: 2338.5
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -265,10 +265,10 @@ TextureImporter:
       name: Profiles_Images_6
       rect:
         serializedVersion: 2
-        x: 170
+        x: 3506
         y: 0.5
-        width: 85
-        height: 118.5
+        width: 1753
+        height: 2338.5
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -286,10 +286,10 @@ TextureImporter:
       name: Profiles_Images_7
       rect:
         serializedVersion: 2
-        x: 255
+        x: 5259
         y: 0.5
-        width: 85
-        height: 118.5
+        width: 1753
+        height: 2338.5
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

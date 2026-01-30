@@ -21,6 +21,7 @@ namespace BEKStudio
         public Image topAvatarImg;
         public TextMeshProUGUI topUsernameText;
         public TextMeshProUGUI topCoinText;
+        public TextMeshProUGUI profileCoinText;
         [Header("Bottom")]
         public GameObject homeButton;
         public GameObject profileButton;
@@ -112,6 +113,7 @@ namespace BEKStudio
             }
 
             topAvatarImg.sprite = avatars[PlayerPrefs.GetInt("avatar")];
+            //topAvatarImg.sprite = avatars[PlayerPrefs.GetInt("avatar", 0)];
             UpdateCoinText();
 
             if (!PlayerPrefs.HasKey("username"))
@@ -156,6 +158,7 @@ namespace BEKStudio
         {
             int coin = PlayerPrefs.GetInt("coin");
             topCoinText.text = FormatCoins(coin);
+            profileCoinText.text = FormatCoins(coin);
         }
 
         string FormatCoins(long coins)

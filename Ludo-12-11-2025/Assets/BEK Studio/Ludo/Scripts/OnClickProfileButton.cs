@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using TMPro;
 using Photon.Pun;
+using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 
@@ -10,16 +8,16 @@ using UnityEngine.UI;
 
 public class OnClickProfileButton : MonoBehaviour
 {
- 
+
     [Header("Profile Stats")]
     public TextMeshProUGUI winText;
     public TextMeshProUGUI loseText;
     public TextMeshProUGUI matchText;
 
     [Header("Avatar System")]
-public Sprite[] avatars;                 // ALL avatars list
-public Image homeAvatarImg;              // Home page avatar
-public Image profileCenterAvatarImg;     // Profile center avatar
+    public Sprite[] avatars;                 // ALL avatars list
+    public Image homeAvatarImg;              // Home page avatar
+    public Image profileCenterAvatarImg;     // Profile center avatar
 
 
     [Header("Profile Username")]
@@ -27,6 +25,7 @@ public Image profileCenterAvatarImg;     // Profile center avatar
     public TMP_InputField nameInputField;
     public GameObject inputFieldRoot; // Image + InputField parent
     public TextMeshProUGUI thirdUsernameText; //Top Name Profile Text Devani Chhe
+    public TextMeshProUGUI saveSuccessText;
 
 
     [Header("Buttons")]
@@ -42,9 +41,14 @@ public Image profileCenterAvatarImg;     // Profile center avatar
         RefreshAvatarFromServer();
     }
 
+    private void Start()
+    {
+        profileCenterAvatarImg.sprite = avatars[PlayerPrefs.GetInt("avatar", 0)];
+    }
+
     public void OnClickProfile()
     {
-       
+
     }
 
     //  Edit button
@@ -59,8 +63,8 @@ public Image profileCenterAvatarImg;     // Profile center avatar
 
         saveButton.SetActive(true);
 
-        
-        nameInputField.text = profileUsernameText.text; 
+
+        nameInputField.text = profileUsernameText.text;
     }
 
     //  Save button
@@ -84,17 +88,24 @@ public Image profileCenterAvatarImg;     // Profile center avatar
         EditAvtarButton.SetActive(false);
         saveButton.SetActive(false);
         editButton.SetActive(true);
+
+        saveSuccessText.gameObject.SetActive(true);
+        Invoke(nameof(HideSaveText), 1f);
+    }
+    void HideSaveText()
+    {
+        saveSuccessText.gameObject.SetActive(false);
     }
 
     // Stats
     public void UpdateProfileStats()
     {
-        winText.text = PlayerPrefs.GetInt("win", 0).ToString();
-        loseText.text = PlayerPrefs.GetInt("lose", 0).ToString();
-        matchText.text = PlayerPrefs.GetInt("match", 0).ToString();
+        winText.text = "Win " + PlayerPrefs.GetInt("win", 0);
+        loseText.text = "Lose " + PlayerPrefs.GetInt("lose", 0);
+        matchText.text = "Match " + PlayerPrefs.GetInt("match", 0);
     }
 
-   
+
 
 
     public void RefreshUsernameFromServer()
@@ -117,47 +128,48 @@ public Image profileCenterAvatarImg;     // Profile center avatar
     }
 
 
-public void OnClickEditAvatar()
-{
-   
-    editButton.SetActive(false);
-    EditavatarPanel.SetActive(true);
-    EditAvtarButton.SetActive(true);
-
-}
-
-public void RefreshAvatarFromServer()
-{
-    if (avatars == null || avatars.Length == 0)
+    public void OnClickEditAvatar()
     {
-        Debug.LogError("Avatars list empty");
-        return;
+
+        editButton.SetActive(false);
+        EditavatarPanel.SetActive(true);
+        EditAvtarButton.SetActive(true);
+
     }
 
-    int avatarIndex = PlayerPrefs.GetInt("avatar", 0);
+    public void RefreshAvatarFromServer()
+    {
+        if (avatars == null || avatars.Length == 0)
+        {
+            Debug.LogError("Avatars list empty");
+            return;
+        }
 
-    if (avatarIndex < 0 || avatarIndex >= avatars.Length)
-        avatarIndex = 0;
+        //int avatarIndex = PlayerPrefs.GetInt("avatar", 0);
+        int avatarIndex = PlayerPrefs.GetInt("avatar");
 
-    Sprite avatarSprite = avatars[avatarIndex];
+        if (avatarIndex < 0 || avatarIndex >= avatars.Length)
+            avatarIndex = 0;
 
-    
-    if (homeAvatarImg != null)
-        homeAvatarImg.sprite = avatarSprite;
-
-    
-    if (profileCenterAvatarImg != null)
-        profileCenterAvatarImg.sprite = avatarSprite;
-}
+        Sprite avatarSprite = avatars[avatarIndex];
 
 
-public void OnAvatarSelected(int avatarIndex)
-{
-    PlayerPrefs.SetInt("avatar", avatarIndex);
-    PlayerPrefs.Save();
+        if (homeAvatarImg != null)
+            homeAvatarImg.sprite = avatarSprite;
 
-    RefreshAvatarFromServer(); 
-}
+
+        if (profileCenterAvatarImg != null)
+            profileCenterAvatarImg.sprite = avatarSprite;
+    }
+
+
+    public void OnAvatarSelected(int avatarIndex)
+    {
+        PlayerPrefs.SetInt("avatar", avatarIndex);
+        PlayerPrefs.Save();
+
+        RefreshAvatarFromServer();
+    }
 
 
 

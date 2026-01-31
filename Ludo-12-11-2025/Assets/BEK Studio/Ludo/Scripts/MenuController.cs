@@ -22,6 +22,7 @@ namespace BEKStudio
         public TextMeshProUGUI topUsernameText;
         public TextMeshProUGUI topCoinText;
         public TextMeshProUGUI profileCoinText;
+        public TextMeshProUGUI playerLevelText;
         [Header("Bottom")]
         public GameObject homeButton;
         public GameObject profileButton;
@@ -70,7 +71,7 @@ namespace BEKStudio
         public string BattleLink;
         public string InviteLink;
 
-        private static bool splashPlayed = true;
+        private static bool splashPlayed = false;
 
 
         void Awake()
@@ -117,23 +118,6 @@ namespace BEKStudio
             //topAvatarImg.sprite = avatars[PlayerPrefs.GetInt("avatar", 0)];
             UpdateCoinText();
 
-            if (!PlayerPrefs.HasKey("username"))
-            {
-#if UNITY_WEBGL
-                string rand = Random.Range(999, 999999).ToString();
-                PlayerPrefs.SetString("username", "Player" + rand);
-                PlayerPrefs.Save();
-                topUsernameText.text = PlayerPrefs.GetString("username");
-                HomeShow();
-#else
-                UsernameShow();
-#endif
-            }
-            else
-            {
-                topUsernameText.text = PlayerPrefs.GetString("username");
-                HomeShow();
-            }
 
 
             AdsManager.Instance.DestoryBannerAd();
@@ -167,6 +151,26 @@ namespace BEKStudio
             splashScreen.SetActive(false);
             homePageScreen.SetActive(true);
 
+            //USername assign
+
+            if (!PlayerPrefs.HasKey("username"))
+            {
+#if UNITY_WEBGL
+                string rand = Random.Range(999, 999999).ToString();
+                PlayerPrefs.SetString("username", "Player" + rand);
+                PlayerPrefs.Save();
+                topUsernameText.text = PlayerPrefs.GetString("username");
+                HomeShow();
+#else
+                UsernameShow();
+#endif
+            }
+            else
+            {
+                topUsernameText.text = PlayerPrefs.GetString("username");
+                HomeShow();
+            }
+
         }
 
         public void UpdateCoinText()
@@ -182,7 +186,7 @@ namespace BEKStudio
                 return coins.ToString();
 
             if (coins < 1_000_000)
-                return (coins / 1000f).ToString("0.#") + "k";
+                return (coins / 1000f).ToString("0.#") + "K";
 
             if (coins < 1_000_000_000)
                 return (coins / 1_000_000f).ToString("0.#") + "M";

@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using BEKStudio;
 
 public class XPSystem : MonoBehaviour
 {
     public static XPSystem Instance;
-
+    
     public int level = 1;
     public int currentXP = 0;
 
@@ -49,6 +50,8 @@ public class XPSystem : MonoBehaviour
         PlayerPrefs.SetInt("XP_Level", level);
         PlayerPrefs.SetInt("XP_Current", currentXP);
         PlayerPrefs.Save();
+
+        MenuController.Instance.playerLevelText.text = level.ToString();
     }
 
     void LoadXP()

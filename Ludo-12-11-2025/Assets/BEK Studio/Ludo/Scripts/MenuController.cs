@@ -38,6 +38,7 @@ namespace BEKStudio
         public GameObject settingScreen;
         public GameObject rewardScreen;
         public GameObject linkGameObject;
+        public GameObject selectColourText;
         [Header("Main")]
         public GameObject mainBottom;
         public GameObject mainBottomHomeActive;
@@ -72,7 +73,6 @@ namespace BEKStudio
         public string InviteLink;
 
         private static bool splashPlayed = false;
-
 
         void Awake()
         {
@@ -234,12 +234,39 @@ namespace BEKStudio
 
             DeactivatePages();
 
-            ButtonAlphaState(offlineModeButton, 0.3f, false);
+            ButtonAlphaState(offlineModeButton, 0.3f, true);
 
             PlayerPrefs.SetString("mode", "online");
             PlayerPrefs.Save();
 
             selectModeScreen.SetActive(true);
+        }
+
+        //Offline 4 Player Button
+        public void OfflineModeButton()
+        {
+            //Check pawn is selected
+            if (PlayerPrefs.HasKey("pawnColor"))
+            {
+                PlayerPrefs.SetInt("IsOfflineMultiplayer", 1);
+                PlayerPrefs.SetString("mode", "computer");
+                PlayerPrefs.Save();
+                PlayerCountShow();
+            }
+            else
+            {
+                //Actiavte selectColourText for 1 second then deactivate using leetween
+                selectColourText.SetActive(true);
+                LeanTween.scale(selectColourText, Vector2.one, 0.2f).setEaseOutBack().setOnComplete(() =>
+                {
+                    LeanTween.scale(selectColourText, Vector2.zero, 0.2f).setDelay(1.0f).setEaseInBack().setOnComplete(() =>
+                    {
+                        selectColourText.SetActive(false);
+                    });
+                });
+            }
+
+            //DeactivatePages();
         }
 
         private void ButtonAlphaState(GameObject gameObject, float alpha, bool enable)
@@ -266,6 +293,7 @@ namespace BEKStudio
             multiplayerScreen.SetActive(true);
         }
 
+        //Quick Panel 
         public void MiddleOfflineMultiplayerButton()
         {
             if (offlineMultiplayerScreen.activeInHierarchy) return;
@@ -274,7 +302,7 @@ namespace BEKStudio
 
             ButtonAlphaState(practiceMatchScreen, 0.3f, false);
 
-            PlayerPrefs.SetInt("IsOfflineMultiplayer", 1);
+            PlayerPrefs.SetInt("IsOfflineMultiplayer", 0);
             PlayerPrefs.SetString("mode", "computer");
             PlayerPrefs.Save();
 
@@ -474,22 +502,12 @@ namespace BEKStudio
 
         public void PawnSelectClose()
         {
-            //if (LeanTween.isTweening(pawnSelectPanel)) return;
-
-            if(!playerCountScreen.activeInHierarchy)
-                playerCountScreen.SetActive(true);
-
-
-
-            Debug.Log("Pawn Select Close Called");
             LeanTween.scale(pawnSelectPanel, Vector2.zero, 0.2f).setEaseInBack().setOnComplete(() =>
             {
-                Debug.Log("Pawn Select Close Completed");
                 pawnSelectScreen.SetActive(false);
 
                 if (PlayerPrefs.HasKey("pawnColor"))
                 {
-                    Debug.Log("Pawn Color Selected, Show Player Count");
                     PlayerCountShow();
                 }
             });
@@ -498,11 +516,12 @@ namespace BEKStudio
 
         void PlayerCountShow()
         {
-            playerCountPanel.transform.localScale = Vector2.zero;
+            Debug.Log("PlayerCountShow");
+            //playerCountPanel.transform.localScale = Vector2.zero;
             playerCountEntryFee.text = PhotonController.Instance.gameEntryPrice().ToString("###,###,###");
             playerCountScreen.SetActive(true);
 
-            LeanTween.scale(playerCountPanel, Vector2.one, 0.2f).setEaseOutBack();
+            //LeanTween.scale(playerCountPanel, Vector2.one, 0.2f).setEaseOutBack();
 
 
 

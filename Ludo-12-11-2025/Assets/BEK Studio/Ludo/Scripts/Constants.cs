@@ -5,7 +5,7 @@ using UnityEngine;
 namespace BEKStudio {
     public static class Constants {
 
-        public static int START_COIN = 250;
+        public static int START_COIN = 150;
 
         public static int COMPUTER_ENTRY_PRICE = 75;
         public static int ONLINE_ENTRY_PRICE = 150;

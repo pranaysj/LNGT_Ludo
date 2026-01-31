@@ -4,34 +4,28 @@ using TMPro;
 
 public class XPSystem : MonoBehaviour
 {
-    public Scrollbar scrollbar;
-    public TMP_Text xpText;
-    public TMP_Text levelText;
+    public static XPSystem Instance;
 
     public int level = 1;
     public int currentXP = 0;
 
-    int[] fixedLevelXP =
+    void Awake()
     {
-        100, 200, 350, 550, 800,
-        1100, 1500, 2000, 2600, 3300
-    };
-
-    void Start()
-    {
-        //  LOAD SAVED DATA
-        level = PlayerPrefs.GetInt("XP_Level", 1);
-        currentXP = PlayerPrefs.GetInt("XP_Current", 0);
-
-        if (level < 1) level = 1;
-
-        UpdateUI();
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            LoadXP();
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void AddXP(string result)
     {
-        int xp = 5; // Finish match base XP
-
+        int xp = 5;
         if (result == "Win") xp += 10;
         else if (result == "Second") xp += 6;
         else if (result == "Third") xp += 3;
@@ -44,31 +38,12 @@ public class XPSystem : MonoBehaviour
             level++;
         }
 
-        SaveXP();   //  SAVE AFTER EVERY MATCH
-        UpdateUI();
+        SaveXP();
+
+        //  UI ko batao
+        XPUIController.RefreshUI();
     }
 
-    int GetMaxXPForLevel(int level)
-    {
-        if (level <= 10)
-            return fixedLevelXP[level - 1];
-
-        int extraLevel = level - 10;
-        return 3300 + (extraLevel * extraLevel * 500);
-    }
-
-    void UpdateUI()
-    {
-        int maxXP = GetMaxXPForLevel(level);
-
-        scrollbar.value = 0f;
-        scrollbar.size = (float)currentXP / maxXP;
-
-        xpText.text = currentXP + "/" + maxXP;
-        levelText.text = "Level " + level;
-    }
-
-    //  SAVE FUNCTION
     void SaveXP()
     {
         PlayerPrefs.SetInt("XP_Level", level);
@@ -76,9 +51,14 @@ public class XPSystem : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    //  EXTRA SAFETY (optional but good)
-    void OnApplicationQuit()
+    void LoadXP()
     {
-        SaveXP();
+        level = PlayerPrefs.GetInt("XP_Level", 1);
+        currentXP = PlayerPrefs.GetInt("XP_Current", 0);
+    }
+
+    public int GetMaxXPForLevel(int level)
+    {
+        return level <= 10 ? 100 * level : 3300 + (level - 10) * 500;
     }
 }

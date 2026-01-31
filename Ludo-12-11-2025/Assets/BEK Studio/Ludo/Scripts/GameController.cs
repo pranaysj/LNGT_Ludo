@@ -394,47 +394,110 @@ namespace BEKStudio {
         //    }
         //}
 
+        //public void ChangeGameState(GameState newState)
+        //{
+        //    gameState = newState;
+
+        //    if (newState == GameState.FINISHED)
+        //    {
+
+        //        UpdateWinLoseMatch();
+
+        //        //  XP SYSTEM (RANK BASED)
+        //        XPSystem xp = FindObjectOfType<XPSystem>();
+
+        //        if (xp != null)
+        //        {
+        //            int myRank = finishOrder.IndexOf(myPlayerColor) + 1;
+        //            // myRank:
+        //            // 1 = Win
+        //            // 2 = Second
+        //            // 3 = Third
+        //            // else = Lose
+
+        //            if (myRank == 1)
+        //                xp.AddXP("Win");
+        //            else if (myRank == 2)
+        //                xp.AddXP("Second");
+        //            else if (myRank == 3)
+        //                xp.AddXP("Third");
+        //            else
+        //                xp.AddXP("Lose");
+        //        }
+
+        //        //  Photon sync 
+        //        if (!isLocal)
+        //        {
+        //            if (PhotonNetwork.IsMasterClient)
+        //            {
+        //                photonView.RPC("WinnerColorRPC", RpcTarget.OthersBuffered, winnerColor);
+        //            }
+        //        }
+
+        //        //  Finish UI
+        //        FinishedShow();
+        //    }
+        //}
+
         public void ChangeGameState(GameState newState)
         {
+
+
             gameState = newState;
 
             if (newState == GameState.FINISHED)
             {
 
+
                 UpdateWinLoseMatch();
 
-                //  XP SYSTEM (RANK BASED)
+
+                // XP SYSTEM
                 XPSystem xp = FindObjectOfType<XPSystem>();
+
 
                 if (xp != null)
                 {
-                    int myRank = finishOrder.IndexOf(myPlayerColor) + 1;
-                    // myRank:
-                    // 1 = Win
-                    // 2 = Second
-                    // 3 = Third
-                    // else = Lose
+                    int index = finishOrder.IndexOf(myPlayerColor);
+                    int myRank = index + 1;
+
+
 
                     if (myRank == 1)
+                    {
+
                         xp.AddXP("Win");
+                    }
                     else if (myRank == 2)
+                    {
+
                         xp.AddXP("Second");
+                    }
                     else if (myRank == 3)
+                    {
+
                         xp.AddXP("Third");
+                    }
                     else
+                    {
+
                         xp.AddXP("Lose");
+                    }
                 }
 
-                //  Photon sync 
+                // Photon sync
                 if (!isLocal)
                 {
+
+
                     if (PhotonNetwork.IsMasterClient)
                     {
+
                         photonView.RPC("WinnerColorRPC", RpcTarget.OthersBuffered, winnerColor);
                     }
                 }
 
-                //  Finish UI
+
                 FinishedShow();
             }
         }
@@ -562,33 +625,79 @@ namespace BEKStudio {
         //    }
         //}
 
+        //public void CheckForFinish(string color = "")
+        //{
+        //    //  Check ALL active players
+        //    foreach (PawnController pc in activePawnControllers)
+        //    {
+        //        string c = pc.pawnColor;
+
+        //        // Agar ye color finish ho chuka hai aur list me nahi hai
+        //        if (IsColorFinished(c) && !finishOrder.Contains(c))
+        //        {
+        //            finishOrder.Add(c);
+        //        }
+        //    }
+
+        //    int totalPlayers = activePawnControllers.Count;
+
+        //    //  GAME FINISH CONDITION (FINAL)
+        //    if (finishOrder.Count >= totalPlayers)
+        //    {
+        //        winnerColor = finishOrder[0]; // first finisher always winner
+        //        ChangeGameState(GameState.FINISHED);
+        //        return;
+        //    }
+
+        //    //  Normal flow
+        //    if (currentPawnController.canPlayAgain)
+        //    {
+        //        currentPawnController.time = 10;
+        //        ChangeGameState(GameState.READY);
+
+        //        if (currentPawnController != myPawnController && isLocal)
+        //        {
+        //            currentPawnController.Play();
+        //        }
+        //        return;
+        //    }
+
+        //    ChangePlayer();
+        //}
+
         public void CheckForFinish(string color = "")
         {
-            //  Check ALL active players
+            Debug.Log("CheckForFinish CALLED");
+
             foreach (PawnController pc in activePawnControllers)
             {
                 string c = pc.pawnColor;
+                bool finished = IsColorFinished(c);
 
-                // Agar ye color finish ho chuka hai aur list me nahi hai
-                if (IsColorFinished(c) && !finishOrder.Contains(c))
+
+
+                if (finished && !finishOrder.Contains(c))
                 {
                     finishOrder.Add(c);
+
                 }
             }
 
+
             int totalPlayers = activePawnControllers.Count;
 
-            //  GAME FINISH CONDITION (FINAL)
+
             if (finishOrder.Count >= totalPlayers)
             {
-                winnerColor = finishOrder[0]; // first finisher always winner
+                winnerColor = finishOrder[0];
+
                 ChangeGameState(GameState.FINISHED);
                 return;
             }
 
-            //  Normal flow
             if (currentPawnController.canPlayAgain)
             {
+
                 currentPawnController.time = 10;
                 ChangeGameState(GameState.READY);
 
@@ -599,17 +708,21 @@ namespace BEKStudio {
                 return;
             }
 
+
             ChangePlayer();
         }
 
         bool IsColorFinished(string color)
         {
-            if (color == "Green") return greenPawns.All(p => p.isCollected);
-            if (color == "Yellow") return yellowPawns.All(p => p.isCollected);
-            if (color == "Blue") return bluePawns.All(p => p.isCollected);
-            if (color == "Red") return redPawns.All(p => p.isCollected);
+            bool result = false;
 
-            return false;
+            if (color == "Green") result = greenPawns.All(p => p.isCollected);
+            else if (color == "Yellow") result = yellowPawns.All(p => p.isCollected);
+            else if (color == "Blue") result = bluePawns.All(p => p.isCollected);
+            else if (color == "Red") result = redPawns.All(p => p.isCollected);
+
+
+            return result;
         }
 
         public void ChangePlayer()

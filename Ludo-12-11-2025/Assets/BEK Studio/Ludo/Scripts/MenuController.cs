@@ -70,7 +70,7 @@ namespace BEKStudio
         public string BattleLink;
         public string InviteLink;
 
-        private static bool splashPlayed = false;
+        private static bool splashPlayed = true;
 
 
         void Awake()
@@ -454,7 +454,7 @@ namespace BEKStudio
             if (offlineMultiplayerScreen.activeInHierarchy)
                 ButtonAlphaState(practiceMatchScreen, 1.0f, true);
 
-            Debug.Log(multiplayerScreen.activeInHierarchy);
+            //Debug.Log(multiplayerScreen.activeInHierarchy);
             //call after offline button
             //PawnSelectClose();
         }
@@ -470,12 +470,22 @@ namespace BEKStudio
 
         public void PawnSelectClose()
         {
+            //if (LeanTween.isTweening(pawnSelectPanel)) return;
+
+            if(!playerCountScreen.activeInHierarchy)
+                playerCountScreen.SetActive(true);
+
+
+
+            Debug.Log("Pawn Select Close Called");
             LeanTween.scale(pawnSelectPanel, Vector2.zero, 0.2f).setEaseInBack().setOnComplete(() =>
             {
+                Debug.Log("Pawn Select Close Completed");
                 pawnSelectScreen.SetActive(false);
 
                 if (PlayerPrefs.HasKey("pawnColor"))
                 {
+                    Debug.Log("Pawn Color Selected, Show Player Count");
                     PlayerCountShow();
                 }
             });
@@ -489,6 +499,8 @@ namespace BEKStudio
             playerCountScreen.SetActive(true);
 
             LeanTween.scale(playerCountPanel, Vector2.one, 0.2f).setEaseOutBack();
+
+
 
         }
 

@@ -68,16 +68,17 @@ namespace BEKStudio {
 
         public void SetUserInfo(string name, int avatarID) {
             usernameText.text = name;
-            avatarImg.sprite = GameController.Instance.avatars[avatarID];
+            avatarImg.sprite = MenuController.Instance.avatars[avatarID];
         }
 
         public void SetUserInfo() {
             if (GameController.Instance.myPawnController != this) {
                 usernameText.text = "Guest" + Random.Range(0, 99999);
-                avatarImg.sprite = GameController.Instance.avatars[Random.Range(0, GameController.Instance.avatars.Length)];
+                //avatarImg.sprite = GameController.Instance.avatars[Random.Range(0, GameController.Instance.avatars.Length)];
+                avatarImg.sprite = MenuController.Instance.avatars[Random.Range(0, MenuController.Instance.avatars.Length)];
             } else {
                 usernameText.text = PlayerPrefs.GetString("username");
-                avatarImg.sprite = GameController.Instance.avatars[PlayerPrefs.GetInt("avatar")];
+                avatarImg.sprite = MenuController.Instance.avatars[PlayerPrefs.GetInt("avatar")];
             }
         }
 

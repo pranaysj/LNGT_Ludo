@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -70,6 +70,8 @@ namespace BEKStudio
         public string BattleLink;
         public string InviteLink;
 
+        private static bool splashPlayed = false;
+
 
         void Awake()
         {
@@ -81,9 +83,8 @@ namespace BEKStudio
 
         void Start()
         {
-
             //Strat Splash Screen
-            StartCoroutine(StartSplashScreen());
+            CheckSplashScreenStatus();
 
             if (PlayerPrefs.HasKey("pawnColor"))
             {
@@ -141,12 +142,26 @@ namespace BEKStudio
 
         }
 
+        private void CheckSplashScreenStatus()
+        {
+            if (!splashPlayed)
+            {
+                splashPlayed = true;
+                StartCoroutine(StartSplashScreen());
+            }
+            else
+            {
+                splashScreen.SetActive(false);
+                homePageScreen.SetActive(true);
+            }
+        }
+
         private IEnumerator StartSplashScreen()
         {
             splashScreen.SetActive(true);
             homePageScreen.SetActive(false);
-            float splashTime = 4.3f;
 
+            float splashTime = 4.3f;
             yield return new WaitForSeconds(splashTime);
 
             splashScreen.SetActive(false);
@@ -464,6 +479,7 @@ namespace BEKStudio
                     PlayerCountShow();
                 }
             });
+
         }
 
         void PlayerCountShow()
@@ -473,6 +489,7 @@ namespace BEKStudio
             playerCountScreen.SetActive(true);
 
             LeanTween.scale(playerCountPanel, Vector2.one, 0.2f).setEaseOutBack();
+
         }
 
         public void PlayerCountItemBtn(int playerCount)

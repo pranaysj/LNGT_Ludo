@@ -852,6 +852,12 @@ namespace BEKStudio {
             SceneManager.LoadScene("Menu");
         }
 
+
+        //Set on button
+        public void ForceWinBtn()
+        {
+            ForcePlayerWin(myPlayerColor);
+        }
         public void ForcePlayerWin(string color)
         {
             // Prevent double finish
@@ -908,11 +914,5 @@ namespace BEKStudio {
             ChangeGameState(GameState.FINISHED);
         }
 
-
-        //Set on button
-        public void ForceWinBtn()
-        {
-            ForcePlayerWin(myPlayerColor);
-        }
     }
 }

@@ -10,7 +10,8 @@ using UnityEngine.UI;
 
 
 namespace BEKStudio {
-    public class GameController : MonoBehaviour {
+    public class GameController : MonoBehaviour
+    {
         public static GameController Instance;
         public enum GameState { NONE, READY, DICE, MOVE, MOVING, WAIT, FINISHED };
         public GameState gameState;
@@ -47,14 +48,18 @@ namespace BEKStudio {
         public Transform finishedPlayersParent;
         string winnerColor;
 
+        List<string> finishOrder = new List<string>(); //New Add 31-1-2026
 
-        void Awake() {
-            if (Instance == null) {
+        void Awake()
+        {
+            if (Instance == null)
+            {
                 Instance = this;
             }
         }
 
-        void OnEnable() {
+        void OnEnable()
+        {
             isLocal = PhotonController.Instance.gameMode() == "computer";
 
             Debug.Log("The game is going to start --- " + isLocal);
@@ -75,14 +80,18 @@ namespace BEKStudio {
 
         }
 
-        void Update() {
+        void Update()
+        {
             if (gameState != GameState.MOVE || gameState == GameState.WAIT) return;
 
-            if (Input.GetMouseButtonDown(0) && (currentPawnController == myPawnController || (PlayerPrefs.GetInt("IsOfflineMultiplayer") == 1))) {
+            if (Input.GetMouseButtonDown(0) && (currentPawnController == myPawnController || (PlayerPrefs.GetInt("IsOfflineMultiplayer") == 1)))
+            {
                 hit2D = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-                if (hit2D.collider != null) {
+                if (hit2D.collider != null)
+                {
                     Debug.Log("hit pawn now check color");
-                    if (hit2D.collider.tag == "Pawn" && (hit2D.collider.name.StartsWith(myPlayerColor) || (PlayerPrefs.GetInt("IsOfflineMultiplayer") == 1))) {
+                    if (hit2D.collider.tag == "Pawn" && (hit2D.collider.name.StartsWith(myPlayerColor) || (PlayerPrefs.GetInt("IsOfflineMultiplayer") == 1)))
+                    {
                         if (hit2D.collider.GetComponent<Pawn>().inBase && currentDice != 5) return;
 
                         if (hit2D.collider.GetComponent<Pawn>().moveCount + (currentDice + 1) > 56) return;
@@ -96,12 +105,14 @@ namespace BEKStudio {
             }
         }
 
-        public void PauseBtn() {
+        public void PauseBtn()
+        {
             AudioController.Instance.PlayButtonSound();
             pauseScreen.SetActive(true);
         }
 
-        public void PauseYesBtn() {
+        public void PauseYesBtn()
+        {
             AudioController.Instance.PlayButtonSound();
             PhotonNetwork.AutomaticallySyncScene = false;
             PhotonNetwork.Disconnect();
@@ -110,13 +121,15 @@ namespace BEKStudio {
             SceneManager.LoadScene("Menu");
         }
 
-        public void PauseNoBtn() {
+        public void PauseNoBtn()
+        {
             AudioController.Instance.PlayButtonSound();
             pauseScreen.SetActive(false);
         }
 
         [PunRPC]
-        void RPCPawnSelect(string arg) {
+        void RPCPawnSelect(string arg)
+        {
             Pawn p = allPawns.Where(x => x.name == arg).FirstOrDefault();
             if (p == null) return;
 
@@ -126,12 +139,18 @@ namespace BEKStudio {
             p.Move(currentDice + 1);
         }
 
-        string getMyPawnColor() {
-            if (isLocal) {
+        string getMyPawnColor()
+        {
+            if (isLocal)
+            {
                 return PlayerPrefs.GetString("pawnColor");
-            } else {
-                for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++) {
-                    if (PhotonNetwork.PlayerList[i] == PhotonNetwork.LocalPlayer) {
+            }
+            else
+            {
+                for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
+                {
+                    if (PhotonNetwork.PlayerList[i] == PhotonNetwork.LocalPlayer)
+                    {
                         return pawnColors[i];
                     }
                 }
@@ -140,15 +159,20 @@ namespace BEKStudio {
             return "";
         }
 
-        int getPlayerCount() {
-            if (isLocal) {
+        int getPlayerCount()
+        {
+            if (isLocal)
+            {
                 return PlayerPrefs.GetInt("playerCount");
-            } else {
+            }
+            else
+            {
                 return PhotonNetwork.PlayerList.Length;
             }
         }
 
-        PawnController getMyPawn() {
+        PawnController getMyPawn()
+        {
             if (myPlayerColor == "Green") return greenPawn;
             if (myPlayerColor == "Yellow") return yellowPawn;
             if (myPlayerColor == "Blue") return bluePawn;
@@ -157,28 +181,36 @@ namespace BEKStudio {
             return null;
         }
 
-        void DisableNotActivePawns() {
+        void DisableNotActivePawns()
+        {
             List<string> colors = pawnColors.ToList();
             List<string> disabledColors = new List<string>();
 
             int removeCount = 4 - getPlayerCount();
 
-            if (isLocal) {
+            if (isLocal)
+            {
                 int rand = Random.Range(0, colors.Count);
 
-                for (int i = 0; i < removeCount; i++) {
+                for (int i = 0; i < removeCount; i++)
+                {
                     rand = Random.Range(0, colors.Count);
 
-                    while (colors[rand] == myPlayerColor) {
+                    while (colors[rand] == myPlayerColor)
+                    {
                         rand = Random.Range(0, colors.Count);
                     }
 
                     disabledColors.Add(colors[rand]);
                     colors.Remove(colors[rand]);
                 }
-            } else {
-                for (int i = getPlayerCount(); i < 4; i++) {
-                    if (i < colors.Count) {
+            }
+            else
+            {
+                for (int i = getPlayerCount(); i < 4; i++)
+                {
+                    if (i < colors.Count)
+                    {
                         disabledColors.Add(colors[i]);
                         colors.RemoveAt(i);
                         i--;
@@ -213,44 +245,66 @@ namespace BEKStudio {
                 }
             }
 
-            for (int i = 0; i < colors.Count; i++) {
-                if (colors[i] == "Green") {
+            for (int i = 0; i < colors.Count; i++)
+            {
+                if (colors[i] == "Green")
+                {
                     activePawnControllers.Add(greenPawn);
                     greenPawn.isBot = !PhotonNetwork.IsConnectedAndReady && colors[i] != myPlayerColor;
-                    if (!isLocal) {
+                    if (!isLocal)
+                    {
                         greenPawn.SetUserInfo(PhotonNetwork.PlayerList[i].NickName, (int)PhotonNetwork.PlayerList[i].CustomProperties["avatar"]);
-                    } else {
+                    }
+                    else
+                    {
                         greenPawn.SetUserInfo();
                     }
-                } else if (colors[i] == "Yellow") {
+                }
+                else if (colors[i] == "Yellow")
+                {
                     activePawnControllers.Add(yellowPawn);
                     yellowPawn.isBot = !PhotonNetwork.IsConnectedAndReady && colors[i] != myPlayerColor;
-                    if (!isLocal) {
+                    if (!isLocal)
+                    {
                         yellowPawn.SetUserInfo(PhotonNetwork.PlayerList[i].NickName, (int)PhotonNetwork.PlayerList[i].CustomProperties["avatar"]);
-                    } else {
+                    }
+                    else
+                    {
                         yellowPawn.SetUserInfo();
                     }
-                } else if (colors[i] == "Blue") {
+                }
+                else if (colors[i] == "Blue")
+                {
                     activePawnControllers.Add(bluePawn);
                     bluePawn.isBot = !PhotonNetwork.IsConnectedAndReady && colors[i] != myPlayerColor;
-                    if (!isLocal) {
+                    if (!isLocal)
+                    {
                         bluePawn.SetUserInfo(PhotonNetwork.PlayerList[i].NickName, (int)PhotonNetwork.PlayerList[i].CustomProperties["avatar"]);
-                    } else {
+                    }
+                    else
+                    {
                         bluePawn.SetUserInfo();
                     }
-                } else if (colors[i] == "Red") {
+                }
+                else if (colors[i] == "Red")
+                {
                     activePawnControllers.Add(redPawn);
                     redPawn.isBot = !PhotonNetwork.IsConnectedAndReady && colors[i] != myPlayerColor;
-                    if (!isLocal) {
+                    if (!isLocal)
+                    {
                         redPawn.SetUserInfo(PhotonNetwork.PlayerList[i].NickName, (int)PhotonNetwork.PlayerList[i].CustomProperties["avatar"]);
-                    } else {
+                    }
+                    else
+                    {
                         redPawn.SetUserInfo();
                     }
                 }
             }
 
-            foreach (PawnController pController in activePawnControllers) {
-                if (pController != myPawnController && (PlayerPrefs.GetInt("IsOfflineMultiplayer") != 1)) {
+            foreach (PawnController pController in activePawnControllers)
+            {
+                if (pController != myPawnController && (PlayerPrefs.GetInt("IsOfflineMultiplayer") != 1))
+                {
                     pController.DisableColliders();
                 }
             }
@@ -259,116 +313,213 @@ namespace BEKStudio {
             SetActivePawn();
         }
 
-        void SetActivePawn() {
-            if (currentPawnController != null) {
+        void SetActivePawn()
+        {
+            if (currentPawnController != null)
+            {
                 currentPawnController.time = 10;
                 currentPawnController.canPlayAgain = false;
             }
 
-            if (isLocal) {
+            if (isLocal)
+            {
                 currentPawnController = activePawnControllers[currentPawnID];
-            } else {
+            }
+            else
+            {
                 currentPawnController = getCurrentPawnController();
             }
-            
+
             currentPawnController.time = 10;
             currentPawnController.canPlayAgain = false;
 
             ChangeGameState(GameState.READY);
 
-            if (isLocal) {
-                if (currentPawnController != myPawnController) {
+            if (isLocal)
+            {
+                if (currentPawnController != myPawnController)
+                {
                     currentPawnController.StartTimer(true);
                     if (PlayerPrefs.GetInt("IsOfflineMultiplayer") != 1)
                     {
                         currentPawnController.Play();
                     }
-                } else {
+                }
+                else
+                {
                     currentPawnController.StartTimer(true);
                 }
-            } else if(currentPawnController == myPawnController){
+            }
+            else if (currentPawnController == myPawnController)
+            {
                 currentPawnController.StartTimer(true);
             }
         }
 
-        PawnController getCurrentPawnController() {
+        PawnController getCurrentPawnController()
+        {
             int colorID = (int)PhotonNetwork.MasterClient.CustomProperties["colorID"];
 
-            if (colorID == 0) {
+            if (colorID == 0)
+            {
                 return greenPawn;
-            } else if (colorID == 1) {
+            }
+            else if (colorID == 1)
+            {
                 return yellowPawn;
-            } else if (colorID == 2) {
+            }
+            else if (colorID == 2)
+            {
                 return bluePawn;
-            } else if (colorID == 3) {
+            }
+            else if (colorID == 3)
+            {
                 return redPawn;
             }
 
             return null;
         }
 
-        public void ChangeGameState(GameState newState) {
+        //public void ChangeGameState(GameState newState) {
+        //    gameState = newState;
+
+        //    if (newState == GameState.FINISHED) {
+        //        if (!isLocal) {
+        //            if (PhotonNetwork.IsMasterClient) {
+        //                photonView.RPC("WinnerColorRPC", RpcTarget.OthersBuffered, winnerColor);
+        //            }
+        //        }
+
+        //        FinishedShow();
+        //    }
+        //}
+
+        public void ChangeGameState(GameState newState)
+        {
             gameState = newState;
 
-            if (newState == GameState.FINISHED) {
-                if (!isLocal) {
-                    if (PhotonNetwork.IsMasterClient) {
+            if (newState == GameState.FINISHED)
+            {
+
+                UpdateWinLoseMatch();
+
+                //  XP SYSTEM (RANK BASED)
+                XPSystem xp = FindObjectOfType<XPSystem>();
+
+                if (xp != null)
+                {
+                    int myRank = finishOrder.IndexOf(myPlayerColor) + 1;
+                    // myRank:
+                    // 1 = Win
+                    // 2 = Second
+                    // 3 = Third
+                    // else = Lose
+
+                    if (myRank == 1)
+                        xp.AddXP("Win");
+                    else if (myRank == 2)
+                        xp.AddXP("Second");
+                    else if (myRank == 3)
+                        xp.AddXP("Third");
+                    else
+                        xp.AddXP("Lose");
+                }
+
+                //  Photon sync 
+                if (!isLocal)
+                {
+                    if (PhotonNetwork.IsMasterClient)
+                    {
                         photonView.RPC("WinnerColorRPC", RpcTarget.OthersBuffered, winnerColor);
                     }
                 }
 
+                //  Finish UI
                 FinishedShow();
             }
         }
 
+        void UpdateWinLoseMatch()
+        {
+            // Match +1 
+            int match = PlayerPrefs.GetInt("match", 0);
+            PlayerPrefs.SetInt("match", match + 1);
+
+            if (winnerColor == myPlayerColor)
+            {
+                // Win +1
+                int win = PlayerPrefs.GetInt("win", 0);
+                PlayerPrefs.SetInt("win", win + 1);
+            }
+            else
+            {
+                // Lose +1
+                int lose = PlayerPrefs.GetInt("lose", 0);
+                PlayerPrefs.SetInt("lose", lose + 1);
+            }
+
+            PlayerPrefs.Save();
+        }
+
         [PunRPC]
-        void WinnerColorRPC(string color) {
+        void WinnerColorRPC(string color)
+        {
             CheckForFinish(color);
         }
 
-        public void CheckGameStatus() {
+        public void CheckGameStatus()
+        {
             ChangeGameState(GameState.WAIT);
 
             CheckPawnsForSameWay();
         }
 
-        string isSomeoneFinished() {
+        string isSomeoneFinished()
+        {
             Pawn[] collectedGreenPaws = greenPawns.Where(x => x.isCollected).ToArray();
             Pawn[] collectedBluePaws = bluePawns.Where(x => x.isCollected).ToArray();
             Pawn[] collectedYellowPaws = yellowPawns.Where(x => x.isCollected).ToArray();
             Pawn[] collectedRedPaws = redPawns.Where(x => x.isCollected).ToArray();
 
-            if (collectedGreenPaws.Length == 4) {
+            if (collectedGreenPaws.Length == 4)
+            {
                 return "Green";
             }
 
-            if (collectedYellowPaws.Length == 4) {
+            if (collectedYellowPaws.Length == 4)
+            {
                 return "Yellow";
             }
 
-            if (collectedBluePaws.Length == 4) {
+            if (collectedBluePaws.Length == 4)
+            {
                 return "Blue";
             }
 
 
-            if (collectedRedPaws.Length == 4) {
+            if (collectedRedPaws.Length == 4)
+            {
                 return "Red";
             }
 
             return "";
         }
 
-        void CheckPawnsForSameWay() {
+        void CheckPawnsForSameWay()
+        {
             bool wait = false;
 
-            foreach (PawnController pController in activePawnControllers) {
+            foreach (PawnController pController in activePawnControllers)
+            {
                 if (pController == currentPawnController) continue;
-                
+
                 Pawn[] currentPawns = currentPawnController.pawns;
                 Pawn[] activePawns = pController.pawns;
 
-                foreach(Pawn currentPawn in currentPawns) {
-                    foreach (Pawn activePawn in activePawns) {
+                foreach (Pawn currentPawn in currentPawns)
+                {
+                    foreach (Pawn activePawn in activePawns)
+                    {
                         if (currentPawn.currentWayID != activePawn.currentWayID) continue;
                         if (currentPawn.inBase || activePawn.inBase) continue;
                         if (currentPawn.isProtected || activePawn.isProtected) continue;
@@ -382,60 +533,119 @@ namespace BEKStudio {
                 }
             }
 
-            if (!wait) {
+            if (!wait)
+            {
                 CheckForFinish();
             }
         }
 
-        public void CheckForFinish(string color = "") {
-            if (!string.IsNullOrEmpty(color)) {
-                winnerColor = color;
-            } else {
-                winnerColor = isSomeoneFinished();
-            }
+        //public void CheckForFinish(string color = "") {
+        //    if (!string.IsNullOrEmpty(color)) {
+        //        winnerColor = color;
+        //    } else {
+        //        winnerColor = isSomeoneFinished();
+        //    }
 
-            if (!string.IsNullOrEmpty(winnerColor)) {
-                ChangeGameState(GameState.FINISHED);
-            } else {
-                if (currentPawnController.canPlayAgain) {
-                    currentPawnController.time = 10;
-                    ChangeGameState(GameState.READY);
-                    if (currentPawnController != myPawnController && isLocal) {
-                        currentPawnController.Play();
-                    }
-                    return;
+        //    if (!string.IsNullOrEmpty(winnerColor)) {
+        //        ChangeGameState(GameState.FINISHED);
+        //    } else {
+        //        if (currentPawnController.canPlayAgain) {
+        //            currentPawnController.time = 10;
+        //            ChangeGameState(GameState.READY);
+        //            if (currentPawnController != myPawnController && isLocal) {
+        //                currentPawnController.Play();
+        //            }
+        //            return;
+        //        }
+
+        //        ChangePlayer();
+        //    }
+        //}
+
+        public void CheckForFinish(string color = "")
+        {
+            //  Check ALL active players
+            foreach (PawnController pc in activePawnControllers)
+            {
+                string c = pc.pawnColor;
+
+                // Agar ye color finish ho chuka hai aur list me nahi hai
+                if (IsColorFinished(c) && !finishOrder.Contains(c))
+                {
+                    finishOrder.Add(c);
                 }
-
-                ChangePlayer();
             }
+
+            int totalPlayers = activePawnControllers.Count;
+
+            //  GAME FINISH CONDITION (FINAL)
+            if (finishOrder.Count >= totalPlayers)
+            {
+                winnerColor = finishOrder[0]; // first finisher always winner
+                ChangeGameState(GameState.FINISHED);
+                return;
+            }
+
+            //  Normal flow
+            if (currentPawnController.canPlayAgain)
+            {
+                currentPawnController.time = 10;
+                ChangeGameState(GameState.READY);
+
+                if (currentPawnController != myPawnController && isLocal)
+                {
+                    currentPawnController.Play();
+                }
+                return;
+            }
+
+            ChangePlayer();
         }
 
-        public void ChangePlayer() {
+        bool IsColorFinished(string color)
+        {
+            if (color == "Green") return greenPawns.All(p => p.isCollected);
+            if (color == "Yellow") return yellowPawns.All(p => p.isCollected);
+            if (color == "Blue") return bluePawns.All(p => p.isCollected);
+            if (color == "Red") return redPawns.All(p => p.isCollected);
+
+            return false;
+        }
+
+        public void ChangePlayer()
+        {
             currentPawnController.profileTimeImg.fillAmount = 0;
             currentPawnController.time = 10;
             currentPawnController.canPlayAgain = false;
             currentPawnController.StopAnimation();
 
-            if (isLocal) {
+            if (isLocal)
+            {
                 currentPawnID = (currentPawnID + 1) % getPlayerCount();
                 SetActivePawn();
-            } else {
-                if (photonView.IsMine && PhotonNetwork.IsMasterClient && currentPawnController == myPawnController) {
+            }
+            else
+            {
+                if (photonView.IsMine && PhotonNetwork.IsMasterClient && currentPawnController == myPawnController)
+                {
                     StartCoroutine(SwitchMasterDelay());
                 }
             }
         }
 
-        IEnumerator SwitchMasterDelay() {
+        IEnumerator SwitchMasterDelay()
+        {
             yield return new WaitForSecondsRealtime(1f);
             PhotonNetwork.SetMasterClient(PhotonNetwork.MasterClient.GetNext());
         }
 
-        public void MasterClientChanged() {
+        public void MasterClientChanged()
+        {
             SetActivePawn();
         }
 
-        public void GameDiceBtn(string color) {
+        public void GameDiceBtn(string color)
+        {
             if (currentPawnController.pawnColor != color) return;
             if (gameState != GameState.READY) return;
             if (!isLocal && !PhotonNetwork.IsMasterClient) return;
@@ -444,61 +654,82 @@ namespace BEKStudio {
             currentDice = Random.Range(0, 6);
             AudioController.Instance.PlayDiceSound();
 
-            if (isLocal) {
+            if (isLocal)
+            {
                 currentPawnController.PlayDiceAnimation();
-                LeanTween.value(0, 1, 0.5f).setOnComplete(() => {
+                LeanTween.value(0, 1, 0.5f).setOnComplete(() =>
+                {
                     currentPawnController.CheckAvailableMovements(currentDice == 5);
                 });
-            } else {
+            }
+            else
+            {
                 photonView.RPC("RPCDice", RpcTarget.AllBuffered, currentDice);
             }
         }
 
         [PunRPC]
-        void RPCDice(int arg) {
+        void RPCDice(int arg)
+        {
             currentDice = arg;
             currentPawnController.PlayDiceAnimation();
 
-            if (photonView.IsMine) {
+            if (photonView.IsMine)
+            {
                 currentPawnController.CheckAvailableMovements(currentDice == 5);
             }
         }
 
-        public void CheckRoomPlayers(Player leftPlayer) {
+        public void CheckRoomPlayers(Player leftPlayer)
+        {
             if (gameState == GameState.FINISHED) return;
 
             int colorID = (int)leftPlayer.CustomProperties["colorID"];
 
-            if (colorID == 0) {
-                if (activePawnControllers.Contains(greenPawn)) {
+            if (colorID == 0)
+            {
+                if (activePawnControllers.Contains(greenPawn))
+                {
                     activePawnControllers.Remove(greenPawn);
                 }
                 greenPawn.DisablePawn();
-            } else if (colorID == 1) {
-                if (activePawnControllers.Contains(yellowPawn)) {
+            }
+            else if (colorID == 1)
+            {
+                if (activePawnControllers.Contains(yellowPawn))
+                {
                     activePawnControllers.Remove(yellowPawn);
                 }
                 yellowPawn.DisablePawn();
-            } else if (colorID == 2) {
-                if (activePawnControllers.Contains(bluePawn)) {
+            }
+            else if (colorID == 2)
+            {
+                if (activePawnControllers.Contains(bluePawn))
+                {
                     activePawnControllers.Remove(bluePawn);
                 }
                 bluePawn.DisablePawn();
-            } else if (colorID == 3) {
-                if (activePawnControllers.Contains(redPawn)) {
+            }
+            else if (colorID == 3)
+            {
+                if (activePawnControllers.Contains(redPawn))
+                {
                     activePawnControllers.Remove(redPawn);
                 }
                 redPawn.DisablePawn();
             }
 
-            if (PhotonNetwork.PlayerList.Length == 1) {
+            if (PhotonNetwork.PlayerList.Length == 1)
+            {
                 winnerColor = myPlayerColor;
                 ChangeGameState(GameState.FINISHED);
             }
         }
 
-        public void FinishedShow() {
-            if (pauseScreen.activeInHierarchy) {
+        public void FinishedShow()
+        {
+            if (pauseScreen.activeInHierarchy)
+            {
                 pauseScreen.SetActive(false);
             }
 
@@ -510,52 +741,66 @@ namespace BEKStudio {
 
             GameObject winnerObject = null;
 
-            foreach (PawnController p in activePawnControllers) {
-                if (p.pawnColor == "Green") {
+            foreach (PawnController p in activePawnControllers)
+            {
+                if (p.pawnColor == "Green")
+                {
                     activePlayerForPanel.Add(finishedPlayersParent.GetChild(0).gameObject);
                     finishedPlayersParent.GetChild(0).gameObject.SetActive(true);
                     finishedPlayersParent.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = greenPawn.usernameText.text;
                     finishedPlayersParent.GetChild(0).GetChild(0).GetComponent<Image>().sprite = greenPawn.avatarImg.sprite;
 
-                    if (winnerColor == p.pawnColor) {
+                    if (winnerColor == p.pawnColor)
+                    {
                         winnerObject = finishedPlayersParent.GetChild(0).gameObject;
                         LeanTween.scale(finishedPlayersParent.GetChild(0).gameObject, new Vector3(1.05f, 1.05f, 1.05f), 0.3f).setLoopPingPong();
                     }
-                } else if (p.pawnColor == "Yellow") {
+                }
+                else if (p.pawnColor == "Yellow")
+                {
                     activePlayerForPanel.Add(finishedPlayersParent.GetChild(2).gameObject);
                     finishedPlayersParent.GetChild(2).gameObject.SetActive(true);
                     finishedPlayersParent.GetChild(2).GetChild(1).GetComponent<TextMeshProUGUI>().text = yellowPawn.usernameText.text;
                     finishedPlayersParent.GetChild(2).GetChild(0).GetComponent<Image>().sprite = yellowPawn.avatarImg.sprite;
 
-                    if (winnerColor == p.pawnColor) {
+                    if (winnerColor == p.pawnColor)
+                    {
                         winnerObject = finishedPlayersParent.GetChild(2).gameObject;
                         LeanTween.scale(finishedPlayersParent.GetChild(2).gameObject, new Vector3(1.05f, 1.05f, 1.05f), 0.3f).setLoopPingPong();
                     }
-                } else if (p.pawnColor == "Blue") {
+                }
+                else if (p.pawnColor == "Blue")
+                {
                     activePlayerForPanel.Add(finishedPlayersParent.GetChild(1).gameObject);
                     finishedPlayersParent.GetChild(1).gameObject.SetActive(true);
                     finishedPlayersParent.GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>().text = bluePawn.usernameText.text;
                     finishedPlayersParent.GetChild(1).GetChild(0).GetComponent<Image>().sprite = bluePawn.avatarImg.sprite;
 
-                    if (winnerColor == p.pawnColor) {
+                    if (winnerColor == p.pawnColor)
+                    {
                         winnerObject = finishedPlayersParent.GetChild(1).gameObject;
                         LeanTween.scale(finishedPlayersParent.GetChild(1).gameObject, new Vector3(1.05f, 1.05f, 1.05f), 0.3f).setLoopPingPong();
                     }
-                } else if (p.pawnColor == "Red") {
+                }
+                else if (p.pawnColor == "Red")
+                {
                     activePlayerForPanel.Add(finishedPlayersParent.GetChild(3).gameObject);
                     finishedPlayersParent.GetChild(3).gameObject.SetActive(true);
                     finishedPlayersParent.GetChild(3).GetChild(1).GetComponent<TextMeshProUGUI>().text = redPawn.usernameText.text;
                     finishedPlayersParent.GetChild(3).GetChild(0).GetComponent<Image>().sprite = redPawn.avatarImg.sprite;
 
-                    if (winnerColor == p.pawnColor) {
+                    if (winnerColor == p.pawnColor)
+                    {
                         winnerObject = finishedPlayersParent.GetChild(3).gameObject;
                         LeanTween.scale(finishedPlayersParent.GetChild(3).gameObject, new Vector3(1.05f, 1.05f, 1.05f), 0.3f).setLoopPingPong();
                     }
                 }
             }
 
-            LeanTween.scale(finishedPanel, Vector3.one, 0.2f).setEaseOutBack().setOnStart(() => {
-                for (int i = 0; i < activePlayerForPanel.Count; i++) {
+            LeanTween.scale(finishedPanel, Vector3.one, 0.2f).setEaseOutBack().setOnStart(() =>
+            {
+                for (int i = 0; i < activePlayerForPanel.Count; i++)
+                {
                     GameObject g = activePlayerForPanel[i];
                     LeanTween.alphaCanvas(g.GetComponent<CanvasGroup>(), 1, 0.5f).setDelay(i * 0.25f);
                 }
@@ -565,37 +810,109 @@ namespace BEKStudio {
             int winnerPrice = 0;
 
             winnerPrice = PlayerPrefs.GetInt("playerCount") * gamePrice;
-            if (winnerColor == myPlayerColor) {
+            if (winnerColor == myPlayerColor)
+            {
                 PlayerPrefs.SetInt("coin", PlayerPrefs.GetInt("coin") + winnerPrice);
                 PlayerPrefs.Save();
             }
 
-            for (int i = 0; i < activePlayerForPanel.Count; i++) {
+            for (int i = 0; i < activePlayerForPanel.Count; i++)
+            {
                 GameObject g = activePlayerForPanel[i];
                 Transform txt = g.transform.Find("Coin");
 
                 txt.GetComponent<TextMeshProUGUI>().text = gamePrice.ToString("###,###,###");
 
-                if (g == winnerObject) {
-                    LeanTween.value(gamePrice, winnerPrice, 2f).setOnUpdate((float var) => {
+                if (g == winnerObject)
+                {
+                    LeanTween.value(gamePrice, winnerPrice, 2f).setOnUpdate((float var) =>
+                    {
                         txt.GetComponent<TextMeshProUGUI>().text = var.ToString("###,###");
                     });
-                } else {
-                    LeanTween.value(gamePrice, 0, 2f).setOnUpdate((float var) => {
+                }
+                else
+                {
+                    LeanTween.value(gamePrice, 0, 2f).setOnUpdate((float var) =>
+                    {
                         txt.GetComponent<TextMeshProUGUI>().text = var.ToString("###,###");
-                    }).setOnComplete(() => {
+                    }).setOnComplete(() =>
+                    {
                         txt.GetComponent<TextMeshProUGUI>().text = "0";
                     });
                 }
             }
         }
 
-        public void FinishedMenuBtn() {
+        public void FinishedMenuBtn()
+        {
             PhotonNetwork.AutomaticallySyncScene = false;
             PhotonNetwork.Disconnect();
             LeanTween.cancelAll();
             AdsManager.Instance.ShowInterstitialAd();
             SceneManager.LoadScene("Menu");
+        }
+
+        public void ForcePlayerWin(string color)
+        {
+            // Prevent double finish
+            if (gameState == GameState.FINISHED)
+                return;
+
+            // Collect all pawns of selected color
+            Pawn[] targetPawns = null;
+
+            switch (color)
+            {
+                case "Green":
+                    targetPawns = greenPawns;
+                    break;
+                case "Yellow":
+                    targetPawns = yellowPawns;
+                    break;
+                case "Blue":
+                    targetPawns = bluePawns;
+                    break;
+                case "Red":
+                    targetPawns = redPawns;
+                    break;
+                default:
+                    Debug.LogError("Invalid color passed to ForcePlayerWin");
+                    return;
+            }
+
+            foreach (Pawn p in targetPawns)
+            {
+                if (!p.isCollected)
+                {
+                    p.isCollected = true;
+                    p.inBase = false;
+                    p.gameObject.SetActive(false); // optional visual cleanup
+                }
+            }
+
+            // Update finish order correctly
+            if (!finishOrder.Contains(color))
+            {
+                finishOrder.Insert(0, color); // Winner always first
+            }
+
+            winnerColor = color;
+
+            // Sync winner in Photon
+            if (!isLocal && PhotonNetwork.IsMasterClient)
+            {
+                photonView.RPC("WinnerColorRPC", RpcTarget.OthersBuffered, color);
+            }
+
+            // End game
+            ChangeGameState(GameState.FINISHED);
+        }
+
+
+        //Set on button
+        public void ForceWinBtn()
+        {
+            ForcePlayerWin(myPlayerColor);
         }
     }
 }

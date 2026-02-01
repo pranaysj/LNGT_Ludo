@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using Photon.Pun;
+using System.Collections;
 using TMPro;
+using UnityEngine;
 using UnityEngine.SceneManagement;
-using Photon.Pun;
+using UnityEngine.UI;
 
 
 namespace BEKStudio
@@ -270,6 +269,18 @@ namespace BEKStudio
             //DeactivatePages();
         }
 
+        public void CheckRewardButton()
+        {
+            selectColourText.SetActive(true);
+            LeanTween.scale(selectColourText, Vector2.one, 0.2f).setEaseOutBack().setOnComplete(() =>
+            {
+                LeanTween.scale(selectColourText, Vector2.zero, 0.2f).setDelay(1.0f).setEaseInBack().setOnComplete(() =>
+                {
+                    selectColourText.SetActive(false);
+                });
+            });
+        }
+
         private void ButtonAlphaState(GameObject gameObject, float alpha, bool enable)
         {
 
@@ -415,6 +426,11 @@ namespace BEKStudio
 
         public void MainWatchVideoBtn()
         {
+            if (AdsManager.Instance == null)
+            {
+                return;
+            }
+
             AdsManager.Instance.ShowRewardedAd();
         }
 

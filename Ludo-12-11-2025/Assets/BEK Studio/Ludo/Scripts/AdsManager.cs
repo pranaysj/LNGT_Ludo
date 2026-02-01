@@ -112,14 +112,74 @@ namespace BEKStudio{
                 });
         }
 
-        public void ShowRewardedAd() {
-            if (rewardedAd != null && rewardedAd.CanShowAd()) {
-                rewardedAd.Show((Reward reward) => {
-                    PlayerPrefs.SetInt("coin", PlayerPrefs.GetInt("coin") + Constants.ADMOB_REWARDED_AD_PRICE);
-                    MenuController.Instance.UpdateCoinText();
-                    RequestRewardedAd();
-                });
+        //public void ShowRewardedAd() {
+        //    if (rewardedAd != null && rewardedAd.CanShowAd()) {
+        //        rewardedAd.Show((Reward reward) => {
+        //            PlayerPrefs.SetInt("coin", PlayerPrefs.GetInt("coin") + Constants.ADMOB_REWARDED_AD_PRICE);
+        //            MenuController.Instance.UpdateCoinText();
+        //            RequestRewardedAd();
+        //        });
+        //    }
+        //}
+
+
+        public void ShowRewardedAd()
+        {
+#if UNITY_EDITOR
+
+            // fake delay
+            StartCoroutine(FakeReward());
+
+#else
+            if (rewardedAd == null)
+            {
+        
+                return;
             }
+
+            if (!rewardedAd.CanShowAd())
+            {
+        
+                return;
+            }
+
+            rewardedAd.Show((Reward reward) =>
+            {
+                GiveReward();
+                RequestRewardedAd();
+            });
+#endif
+        }
+
+        // For Testing karva mate
+        IEnumerator FakeReward()
+        {
+            yield return new WaitForSeconds(2.5f);
+            GiveReward();
+        }
+
+
+
+
+        void GiveReward()
+        {
+            int oldCoin = PlayerPrefs.GetInt("coin");
+            int newCoin = oldCoin + Constants.ADMOB_REWARDED_AD_WATCH;
+
+            PlayerPrefs.SetInt("coin", newCoin);
+            PlayerPrefs.Save();
+
+
+
+            MenuController.Instance.UpdateCoinText();
+            //// Profile screen (agar open hai)
+            //OnClickProfileButton profile =
+            //    FindObjectOfType<OnClickProfileButton>();
+
+            //if (profile != null)
+            //    profile.RefreshCoin();
+
+            //MenuController.Instance.profileCoinText.text = newCoin.ToString();  
         }
     }
 }

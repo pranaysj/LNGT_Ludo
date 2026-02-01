@@ -1,4 +1,5 @@
 using Photon.Pun;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -171,6 +172,8 @@ public class OnClickProfileButton : MonoBehaviour
         RefreshAvatarFromServer();
     }
 
-
-
+    internal void RefreshCoin()
+    {
+        throw new NotImplementedException();
+    }
 }

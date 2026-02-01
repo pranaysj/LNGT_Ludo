@@ -1,3 +1,4 @@
+using BEKStudio;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -42,12 +43,13 @@ public class RewardController : MonoBehaviour
 
     void Start()
     {
-        UpdateAllUI();
+        //UpdateAllUI();
+        InvokeRepeating(nameof(UpdateAllUI), 0f, 1f);
     }
 
     void Update()
     {
-        UpdateAllUI();
+        //UpdateAllUI();
     }
 
     // ===================== CLAIM ALL =====================
@@ -60,6 +62,7 @@ public class RewardController : MonoBehaviour
         {
             totalCoins += 5;
             SaveClaimTime(DAILY_KEY);
+            MenuController.Instance.CheckRewardButton();
         }
 
         if (CanClaim(WEEKLY_KEY, WEEKLY_CD))
@@ -79,7 +82,6 @@ public class RewardController : MonoBehaviour
             PlayerPrefs.Save();
             AddCoins(totalCoins);
         }
-
         UpdateAllUI();
     }
 

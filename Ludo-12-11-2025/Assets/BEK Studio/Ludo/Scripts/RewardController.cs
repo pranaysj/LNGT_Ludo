@@ -131,7 +131,18 @@ public class RewardController : MonoBehaviour
         if (PlayerPrefs.HasKey(key))
             return DateTime.Parse(PlayerPrefs.GetString(key));
 
-        return DateTime.UtcNow - cooldown; // first-time claim allowed
+        // FIRST TIME LOGIC
+        if (key == DAILY_KEY)
+        {
+            // Daily is immediately ready
+            return DateTime.UtcNow - cooldown;
+        }
+        else
+        {
+            // Weekly & Special start countdown from now
+            PlayerPrefs.SetString(key, DateTime.UtcNow.ToString());
+            return DateTime.UtcNow;
+        }
     }
 
     void SaveClaimTime(string key)

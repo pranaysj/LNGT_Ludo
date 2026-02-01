@@ -38,6 +38,7 @@ namespace BEKStudio
         public GameObject settingScreen;
         public GameObject rewardScreen;
         public GameObject linkGameObject;
+        [Header("PopUp Text")]
         public GameObject selectColourText;
         [Header("Main")]
         public GameObject mainBottom;
@@ -272,10 +273,10 @@ namespace BEKStudio
         private void ButtonAlphaState(GameObject gameObject, float alpha, bool enable)
         {
 
-            Color color = gameObject.GetComponent<Image>().color;
+            /*Color color = gameObject.GetComponent<Image>().color;
             Button button = gameObject.GetComponent<Button>();
             button.interactable = enable;
-            color.a = alpha;
+            color.a = alpha;*/
         }
 
         public void MiddleMultiplayerButton()
@@ -293,20 +294,45 @@ namespace BEKStudio
             multiplayerScreen.SetActive(true);
         }
 
-        //Quick Panel 
+        //Practice Panel 
         public void MiddleOfflineMultiplayerButton()
         {
             if (offlineMultiplayerScreen.activeInHierarchy) return;
 
             DeactivatePages();
 
-            ButtonAlphaState(practiceMatchScreen, 0.3f, false);
+            //ButtonAlphaState(practiceMatchScreen, 0.3f, false);
 
-            PlayerPrefs.SetInt("IsOfflineMultiplayer", 0);
-            PlayerPrefs.SetString("mode", "computer");
-            PlayerPrefs.Save();
+            //PlayerPrefs.SetInt("IsOfflineMultiplayer", 0);
+            //PlayerPrefs.SetString("mode", "computer");
+            //PlayerPrefs.Save();
 
             offlineMultiplayerScreen.SetActive(true);
+        }
+
+        public void PratcieButton()
+        {
+            //Check pawn is selected
+            if (PlayerPrefs.HasKey("pawnColor"))
+            {
+                PlayerPrefs.SetInt("IsOfflineMultiplayer", 0);
+                PlayerPrefs.SetString("mode", "computer");
+                PlayerPrefs.Save();
+                PlayerCountShow();
+            }
+            else
+            {
+                //Actiavte selectColourText for 1 second then deactivate using leetween
+                selectColourText.SetActive(true);
+                LeanTween.scale(selectColourText, Vector2.one, 0.2f).setEaseOutBack().setOnComplete(() =>
+                {
+                    LeanTween.scale(selectColourText, Vector2.zero, 0.2f).setDelay(1.0f).setEaseInBack().setOnComplete(() =>
+                    {
+                        selectColourText.SetActive(false);
+                    });
+                });
+            }
+            //DeactivatePages();
         }
 
         //OLD FUNCTIONS
@@ -500,6 +526,7 @@ namespace BEKStudio
             PawnSelectClose();
         }
 
+
         public void PawnSelectClose()
         {
             LeanTween.scale(pawnSelectPanel, Vector2.zero, 0.2f).setEaseInBack().setOnComplete(() =>
@@ -552,6 +579,14 @@ namespace BEKStudio
             {
                 SceneManager.LoadScene("Game");
             }
+        }
+
+        //New Method to close player count panel and delete pawncolor key
+        public void ClosePlayerCountButton()
+        {
+            AudioController.Instance.PlayButtonSound();
+            PlayerPrefs.DeleteKey("pawnColor");
+            PlayerCountClose();
         }
 
         public void PlayerCountCloseBtn()

@@ -1,4 +1,4 @@
-using BEKStudio;
+﻿using BEKStudio;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -51,6 +51,13 @@ public class RewardController : MonoBehaviour
     public void ClaimAll()
     {
         AudioController.Instance.PlayButtonSound();
+
+
+        Debug.Log("ClaimAll called");
+
+        Debug.Log("Daily CanClaim = " + CanClaim(DAILY_KEY, DAILY_CD));
+        Debug.Log("Weekly CanClaim = " + CanClaim(WEEKLY_KEY, WEEKLY_CD));
+        Debug.Log("Special CanClaim = " + CanClaim(SPECIAL_KEY, SPECIAL_CD));
 
         int totalCoins = 0;
 
@@ -123,7 +130,19 @@ public class RewardController : MonoBehaviour
 
     private bool CanClaim(string key, TimeSpan cooldown)
     {
-        return DateTime.UtcNow - GetLastClaimTime(key, cooldown) >= cooldown;
+        //return DateTime.UtcNow - GetLastClaimTime(key, cooldown) >= cooldown;
+
+
+        DateTime last = GetLastClaimTime(key, cooldown);
+
+        //SAFETY: corrupted or future time
+        if (last > DateTime.UtcNow)
+        {
+            SaveClaimTime(key);   // reset safely
+            return false;
+        }
+
+        return DateTime.UtcNow - last >= cooldown;
     }
 
     private DateTime GetLastClaimTime(string key, TimeSpan cooldown)
@@ -156,11 +175,12 @@ public class RewardController : MonoBehaviour
 
     private string FormatTime(TimeSpan time)
     {
-        int totalHours = time.Days * 24 + time.Hours;
+        int days = Mathf.FloorToInt((float)time.TotalDays);
 
-        if (time.Days > 1)
-            return $"{time.Days} days";
+        if (days >= 2)
+            return $"{days} days";
 
+        int totalHours = Mathf.FloorToInt((float)time.TotalHours);
         return $"{totalHours:D2}:{time.Minutes:D2}:{time.Seconds:D2}";
     }
 

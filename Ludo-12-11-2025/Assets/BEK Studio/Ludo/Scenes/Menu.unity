@@ -12609,7 +12609,7 @@ MonoBehaviour:
   homeOnline: {fileID: 0}
   homeComputer: {fileID: 0}
   homecomputer_offlinemultiplayer: {fileID: 0}
-  storeScreen: {fileID: 561310863}
+  storeScreen: {fileID: 4587923231571085276}
   storePanel: {fileID: 534254938}
   pawnSelectScreen: {fileID: 76928965}
   pawnSelectPanel: {fileID: 1436320687}

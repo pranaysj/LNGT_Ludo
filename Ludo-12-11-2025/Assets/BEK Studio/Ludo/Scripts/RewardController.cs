@@ -41,28 +41,23 @@ public class RewardController : MonoBehaviour
     private readonly TimeSpan WEEKLY_CD = TimeSpan.FromDays(7);
     private readonly TimeSpan SPECIAL_CD = TimeSpan.FromDays(14);
 
-    void Start()
+    private void Start()
     {
-        //UpdateAllUI();
         InvokeRepeating(nameof(UpdateAllUI), 0f, 1f);
-    }
-
-    void Update()
-    {
-        //UpdateAllUI();
     }
 
     // ===================== CLAIM ALL =====================
 
     public void ClaimAll()
     {
+        AudioController.Instance.PlayButtonSound();
+
         int totalCoins = 0;
 
         if (CanClaim(DAILY_KEY, DAILY_CD))
         {
             totalCoins += 5;
             SaveClaimTime(DAILY_KEY);
-            MenuController.Instance.CheckRewardButton();
         }
 
         if (CanClaim(WEEKLY_KEY, WEEKLY_CD))
@@ -79,13 +74,15 @@ public class RewardController : MonoBehaviour
 
         if (totalCoins > 0)
         {
-            PlayerPrefs.Save();
             AddCoins(totalCoins);
         }
+
         UpdateAllUI();
     }
 
-    void UpdateAllUI()
+    // ===================== UI UPDATE =====================
+
+    private void UpdateAllUI()
     {
         bool anyAvailable = false;
 
@@ -96,7 +93,7 @@ public class RewardController : MonoBehaviour
         claimAllButton.interactable = anyAvailable;
     }
 
-    void UpdateChestUI(
+    private void UpdateChestUI(
         string key,
         TimeSpan cooldown,
         TMP_Text timerText,
@@ -122,51 +119,56 @@ public class RewardController : MonoBehaviour
         }
     }
 
+    // ===================== TIME LOGIC =====================
 
-    bool CanClaim(string key, TimeSpan cooldown)
+    private bool CanClaim(string key, TimeSpan cooldown)
     {
         return DateTime.UtcNow - GetLastClaimTime(key, cooldown) >= cooldown;
     }
 
-    DateTime GetLastClaimTime(string key, TimeSpan cooldown)
+    private DateTime GetLastClaimTime(string key, TimeSpan cooldown)
     {
         if (PlayerPrefs.HasKey(key))
-            return DateTime.Parse(PlayerPrefs.GetString(key));
+        {
+            return DateTime.Parse(
+                PlayerPrefs.GetString(key),
+                System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.RoundtripKind
+            );
+        }
 
-        // FIRST TIME LOGIC
+        // First-time behavior
         if (key == DAILY_KEY)
         {
-            // Daily is immediately ready
-            return DateTime.UtcNow - cooldown;
+            return DateTime.UtcNow - cooldown; // Daily is ready immediately
         }
-        else
-        {
-            // Weekly & Special start countdown from now
-            PlayerPrefs.SetString(key, DateTime.UtcNow.ToString());
-            return DateTime.UtcNow;
-        }
+
+        return DateTime.UtcNow; // Weekly & Special start countdown
     }
 
-    void SaveClaimTime(string key)
+    private void SaveClaimTime(string key)
     {
-        PlayerPrefs.SetString(key, DateTime.UtcNow.ToString());
+        PlayerPrefs.SetString(key, DateTime.UtcNow.ToString("o")); // ISO-8601
+        PlayerPrefs.Save();
     }
 
-    string FormatTime(TimeSpan time)
+    // ===================== HELPERS =====================
+
+    private string FormatTime(TimeSpan time)
     {
         int totalHours = time.Days * 24 + time.Hours;
 
-        if(time.Days > 1)
+        if (time.Days > 1)
             return $"{time.Days} days";
 
         return $"{totalHours:D2}:{time.Minutes:D2}:{time.Seconds:D2}";
     }
 
-
-    void AddCoins(int amount)
+    private void AddCoins(int amount)
     {
-        Debug.Log($"Claimed total coins: {amount}");
-        PlayerPrefs.SetInt("coin", PlayerPrefs.GetInt("coin") + amount);
+        Debug.Log($"Claimed coins: {amount}");
+        PlayerPrefs.SetInt("coin", PlayerPrefs.GetInt("coin", 0) + amount);
+        PlayerPrefs.Save();
     }
-
 }
+
